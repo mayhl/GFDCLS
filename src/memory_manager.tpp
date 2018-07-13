@@ -25,8 +25,8 @@
 // Memory Allocate Functions                             //
 ///////////////////////////////////////////////////////////
 
-template<typename DATATYPE, typename ...Types>
-	bool memory_manager::allocateMemory(std::string &message, memory_unit<DATATYPE> *first, Types* ... rest)
+template<typename T, typename ...Types>
+	bool MemoryManager::allocateMemory(std::string &message, Memory_Unit<T> *first, Types* ... rest)
 	{
 		if ( allocateMemory(message,first) )
 			return allocateMemory(message,rest...);
@@ -34,8 +34,8 @@ template<typename DATATYPE, typename ...Types>
 			return false;
 	}
 
-template<typename DATATYPE> 
-	bool memory_manager::allocateMemory(std::string &message, memory_unit<DATATYPE> *first)
+template<typename T> 
+	bool MemoryManager::allocateMemory(std::string &message, Memory_Unit<T> *first)
 	{
 		return first->allocateMemory(message);
 	}
@@ -45,8 +45,8 @@ template<typename DATATYPE>
 // Memory Deallocate Functions                           //
 ///////////////////////////////////////////////////////////
 
-template<typename DATATYPE, typename ...Types>
-	bool memory_manager::deallocateMemory(std::string &message, memory_unit<DATATYPE> *first, Types* ... rest)
+template<typename T, typename ...Types>
+	bool MemoryManager::deallocateMemory(std::string &message, Memory_Unit<T> *first, Types* ... rest)
 	{
 		if ( deallocateMemory(message, first) )
 			return deallocateMemory(message, rest...);
@@ -54,8 +54,8 @@ template<typename DATATYPE, typename ...Types>
 			return false;
 	}
 
-template<typename DATATYPE>
-	bool memory_manager::deallocateMemory(std::string &message, memory_unit<DATATYPE> *first)
+template<typename T>
+	bool MemoryManager::deallocateMemory(std::string &message, Memory_Unit<T> *first)
 	{
 		return first->deallocateMemory(message);
 	};
@@ -65,8 +65,8 @@ template<typename DATATYPE>
 // Copy Device to Host Functions                         //
 ///////////////////////////////////////////////////////////
 	
-template<typename DATATYPE, typename ...Types>
-	bool memory_manager::copyDeviceToHost(std::string &message, memory_unit<DATATYPE> *first, Types* ... rest)
+template<typename T, typename ...Types>
+	bool MemoryManager::copyDeviceToHost(std::string &message, Memory_Unit<T> *first, Types* ... rest)
 	{
 		if (copyDeviceToHost(message, first))
 			return copyDeviceToHost(message, rest...);
@@ -74,8 +74,8 @@ template<typename DATATYPE, typename ...Types>
 			return false;
 	}
 
-template<typename DATATYPE>
-	bool memory_manager::copyDeviceToHost(std::string &message, memory_unit<DATATYPE> *first)
+template<typename T>
+	bool MemoryManager::copyDeviceToHost(std::string &message, Memory_Unit<T> *first)
 	{
 		return first->copyDeviceToHost(message);
 	}
@@ -84,8 +84,8 @@ template<typename DATATYPE>
 // Copy Host to Device Functions                         //
 ///////////////////////////////////////////////////////////
 	
-template<typename DATATYPE, typename ...Types>
-	bool memory_manager::copyHostToDevice(std::string &message, memory_unit<DATATYPE> *first, Types* ... rest)
+template<typename T, typename ...Types>
+	bool MemoryManager::copyHostToDevice(std::string &message, Memory_Unit<T> *first, Types* ... rest)
 	{
 		if ( copyHostToDevice(message, first) )
 			return copyHostToDevice(message, rest...);
@@ -93,8 +93,8 @@ template<typename DATATYPE, typename ...Types>
 			return false;
 	}
 
-template<typename DATATYPE>
-	bool memory_manager::copyHostToDevice(std::string &message, memory_unit<DATATYPE> *first)
+template<typename T>
+	bool MemoryManager::copyHostToDevice(std::string &message, Memory_Unit<T> *first)
 	{
 		return first->copyHostToDevice(message);
 	}

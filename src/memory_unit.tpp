@@ -26,30 +26,30 @@
 // Constructors //
 //////////////////
 
-template<class DATATYPE>
-	memory_unit<DATATYPE>::memory_unit(std::string name, memory_scope::type scope, int n_x, int n_y, int n_z) :
-		name(name), scope(scope), n_x(n_x), n_y(n_y), n_z(n_z)
+template<class T>
+	Memory_Unit<T>::Memory_Unit(std::string name, MemoryType::Type type, int n_x, int n_y, int n_z) :
+		name(name), type(type), n_x(n_x), n_y(n_y), n_z(n_z)
 	{
 		initialize();
 	}
 	
-template<class DATATYPE>
-	memory_unit<DATATYPE>::memory_unit(std::string name, memory_scope::type scope, int n_x, int n_y) :
-		name(name), scope(scope), n_x(n_x), n_y(n_y), n_z(1)
+template<class T>
+	Memory_Unit<T>::Memory_Unit(std::string name, MemoryType::Type type, int n_x, int n_y) :
+		name(name), type(type), n_x(n_x), n_y(n_y), n_z(1)
 	{
 		initialize();
 	}
 	
-template<class DATATYPE>
-	memory_unit<DATATYPE>::memory_unit(std::string name, memory_scope::type scope, int n_x) :
-		name(name), scope(scope), n_x(n_x), n_y(1), n_z(1)
+template<class T>
+	Memory_Unit<T>::Memory_Unit(std::string name, MemoryType::Type type, int n_x) :
+		name(name), type(type), n_x(n_x), n_y(1), n_z(1)
 	{
 		initialize();
 	}
 
-template<class DATATYPE>	
-	memory_unit<DATATYPE>::memory_unit(std::string name, memory_unit<DATATYPE> *copy) :	
-		name(name), scope(copy->scope), n_x(copy->n_x), n_y(copy->n_y), n_z(copy->n_z), memory_size(copy->memory_size)
+template<class T>	
+	Memory_Unit<T>::Memory_Unit(std::string name, Memory_Unit<T> *copy) :	
+		name(name), type(copy->type), n_x(copy->n_x), n_y(copy->n_y), n_z(copy->n_z), memory_size(copy->memory_size)
 	{
 		initialize();
 	}
@@ -59,8 +59,8 @@ template<class DATATYPE>
 // Constructors Subroutines //
 //////////////////////////////
 	
-template<class DATATYPE>	
-	void memory_unit<DATATYPE>::initialize(void)
+template<class T>	
+	void Memory_Unit<T>::initialize()
 	{
 		data_device = NULL;
 		data_host = NULL;
@@ -69,10 +69,10 @@ template<class DATATYPE>
 		computeMemorySize();
 	}	
 	
-template<class DATATYPE>
-	void memory_unit<DATATYPE>::computeMemorySize(void)
+template<class T>
+	void Memory_Unit<T>::computeMemorySize()
 	{
-		memory_size = n_x*n_y*n_z*sizeof(DATATYPE);
+		memory_size = n_x*n_y*n_z*sizeof(T);
 
 		dimensions = 0;
 		if (n_x > 1) { dimensions++; }
@@ -86,8 +86,8 @@ template<class DATATYPE>
 ///////////////////////
 
 	
-template<typename DATATYPE> 
-	bool memory_unit<DATATYPE>::allocateMemory(std::string &message)
+template<typename T> 
+	bool Memory_Unit<T>::allocateMemory(std::string &message)
 	{
 
 		cudaError cuda_error_device = cudaSuccess;
@@ -96,22 +96,22 @@ template<typename DATATYPE>
 		bool is_host_successful = false; 
 		bool is_successful = false; 
 		
-		// Allocating memory depending on scope.
-		switch (scope)
+		// Allocating memory depending on type.
+		switch (type)
 		{
-		case memory_scope::HOST_ONLY:
+		case MemoryType::host_only:
 		
 			if ( !is_host_allocated )
-				data_host = (DATATYPE*)malloc(memory_size);		
+				data_host = (T*)malloc(memory_size);		
 			break;
 
-		case memory_scope::DEVICE_ONLY:
+		case MemoryType::device_only:
 		
 			if ( !is_device_allocated )
 				cuda_error_device = cudaMalloc((void **)&data_device, memory_size);
 			break;
 
-		case memory_scope::PINNED:
+		case MemoryType::pinned:
 		
 			if ( !is_host_allocated )
 				cuda_error_host = cudaMallocHost((void**)&data_host, memory_size);
@@ -120,10 +120,10 @@ template<typename DATATYPE>
 				cuda_error_device = cudaMalloc((void **)&data_device, memory_size);
 			break;
 	
-		case memory_scope::NON_PINNED:
+		case MemoryType::non_pinned:
 			
 			if ( !is_host_allocated )
-				data_host = (DATATYPE*)malloc(memory_size);
+				data_host = (T*)malloc(memory_size);
 			
 			if ( !is_device_allocated )
 				cuda_error_device = cudaMalloc((void **)&data_device, memory_size);	
@@ -138,7 +138,7 @@ template<typename DATATYPE>
 		// Verifying host memory has been allocated and detecting error type.
 		std::string host_error_message= "ERROR: No Message produce.\n\n";
 
-		if ( scope == memory_scope::DEVICE_ONLY )
+		if ( type == MemoryType::device_only )
 			is_host_successful = true;
 		else
 		{
@@ -149,7 +149,7 @@ template<typename DATATYPE>
 			}
 			else
 			{
-				if (scope == memory_scope::PINNED )
+				if (type == MemoryType::pinned )
 				{
 					if (cuda_error_host == cudaSuccess)				
 						is_host_successful = true;		
@@ -176,7 +176,7 @@ template<typename DATATYPE>
 		// Verifying device memory has been allocated and detecting error type.
 		std::string device_error_message= "ERROR: No Message produce.\n\n";
 		
-		if( scope == memory_scope::HOST_ONLY )
+		if( type == MemoryType::host_only )
 			is_device_successful = true;
 		else
 		{
@@ -210,7 +210,7 @@ template<typename DATATYPE>
 		if( is_device_successful && is_host_successful )
 		{
 			is_successful = true;
-			message += "Allocating " + memory_scope::toString(scope) + " memory '" + name + "' successful.\n";
+			message += "Allocating " + MemoryType::toString(type) + " memory '" + name + "' successful.\n";
 			
 		}
 		else
@@ -246,8 +246,8 @@ template<typename DATATYPE>
 		return is_successful;
 	}
 
-template<typename DATATYPE>
-	bool memory_unit<DATATYPE>::deallocateMemory(std::string &message)
+template<typename T>
+	bool Memory_Unit<T>::deallocateMemory(std::string &message)
 	{
 		
 		cudaError cuda_error_device = cudaSuccess;
@@ -256,19 +256,19 @@ template<typename DATATYPE>
 		bool is_host_successful = false; 
 		bool is_successful = false; 
 		
-		switch (scope)
+		switch (type)
 		{
-		case memory_scope::HOST_ONLY:
+		case MemoryType::host_only:
 			if (is_host_allocated )
 				free(data_host);
 			break;
 
-		case memory_scope::DEVICE_ONLY:
+		case MemoryType::device_only:
 			if( is_device_allocated )
 				cuda_error_device = cudaFree(data_device);
 			break;
 
-		case memory_scope::PINNED:
+		case MemoryType::pinned:
 			if( is_host_allocated )
 				cuda_error_host = cudaFreeHost(data_host);
 			
@@ -276,7 +276,7 @@ template<typename DATATYPE>
 				cuda_error_device = cudaFree(data_device);
 			break;
 
-		case memory_scope::NON_PINNED:
+		case MemoryType::non_pinned:
 			if( is_host_allocated )
 				free(data_host);
 			if( is_device_allocated )
@@ -291,7 +291,7 @@ template<typename DATATYPE>
 		// Verifying host memory has been deallocated and detecting error type.
 		std::string host_error_message = "ERROR: No Message produce.\n\n";
 		
-		if ( scope == memory_scope::DEVICE_ONLY )
+		if ( type == MemoryType::device_only )
 			is_host_successful = true;
 		else
 		{
@@ -303,7 +303,7 @@ template<typename DATATYPE>
 			}
 			else
 			{
-				if( scope == memory_scope::PINNED )
+				if( type == MemoryType::pinned )
 				{
 					if( cuda_error_host == cudaSuccess )					
 						is_host_successful = true;
@@ -330,7 +330,7 @@ template<typename DATATYPE>
 		// Verifying device memory has been deallocated and detecting error type.	
 		std::string device_error_message = "ERROR: No Message produce.\n\n";;
 		
-		if ( scope == memory_scope::HOST_ONLY )
+		if ( type == MemoryType::host_only )
 			is_device_successful = true;
 		else
 		{
@@ -377,7 +377,7 @@ template<typename DATATYPE>
 		if( is_device_successful && is_host_successful )
 		{
 			is_successful = true;
-			message += "Deallocating " + memory_scope::toString(scope) + " memory '" + name + "' successful.\n";
+			message += "Deallocating " + MemoryType::toString(type) + " memory '" + name + "' successful.\n";
 			
 		}
 		else
@@ -414,8 +414,8 @@ template<typename DATATYPE>
 
 	};	
 	
-template<typename DATATYPE>
-	bool memory_unit<DATATYPE>::copyDeviceToHost(std::string &message)
+template<typename T>
+	bool Memory_Unit<T>::copyDeviceToHost(std::string &message)
 	{
 		
 		cudaError cuda_error = cudaSuccess;
@@ -423,7 +423,7 @@ template<typename DATATYPE>
 		
 		std::string submessage;
 		
-		if( scope == memory_scope::PINNED || scope == memory_scope::NON_PINNED )
+		if( type == MemoryType::pinned || type == MemoryType::non_pinned )
 		{
 			cuda_error = cudaMemcpy(data_host, data_device, memory_size, cudaMemcpyDeviceToHost);
 			
@@ -436,7 +436,7 @@ template<typename DATATYPE>
 			else
 			{
 				is_successful = true;	
-				message += "Copying device to host for " + memory_scope::toString(scope) + " memory '" + name + "' successful.\n";
+				message += "Copying device to host for " + MemoryType::toString(type) + " memory '" + name + "' successful.\n";
 			}
 		}
 		else
@@ -463,8 +463,8 @@ template<typename DATATYPE>
 		return is_successful;
 	}
 
-template<typename DATATYPE>
-	bool memory_unit<DATATYPE>::copyHostToDevice(std::string &message)
+template<typename T>
+	bool Memory_Unit<T>::copyHostToDevice(std::string &message)
 	{
 		
 		cudaError cuda_error = cudaSuccess;
@@ -472,7 +472,7 @@ template<typename DATATYPE>
 		
 		std::string submessage;
 		
-		if( scope == memory_scope::PINNED || scope == memory_scope::NON_PINNED )
+		if( type == MemoryType::pinned || type == MemoryType::non_pinned )
 		{
 			cuda_error = cudaMemcpy(data_device, data_host, memory_size, cudaMemcpyHostToDevice);
 			
@@ -485,7 +485,7 @@ template<typename DATATYPE>
 			else
 			{
 				is_successful = true;	
-				message += "Copying host to device for " + memory_scope::toString(scope) + " memory '" + name + "' successful.\n";
+				message += "Copying host to device for " + MemoryType::toString(type) + " memory '" + name + "' successful.\n";
 			}
 		}
 		else
@@ -518,14 +518,14 @@ template<typename DATATYPE>
 // Memory Info //
 /////////////////		
 	
-template<typename DATATYPE>
-	std::string memory_unit<DATATYPE>::toString()
+template<typename T>
+	std::string Memory_Unit<T>::toString()
 	{
 		std::string message = "";
 		
 		message += ("Name        : " + name + "\n");
-		message += ("Memory Type : " + memory_scope::toString(scope) + "\n");
-		message += ("Data Type   : " + std::string(typeid(DATATYPE).name()) + "\n");
+		message += ("Memory Type : " + MemoryType::toString(type) + "\n");
+		message += ("Data Type   : " + std::string(typeid(T).name()) + "\n");
 		message += ("Dims        : " + std::to_string(static_cast<unsigned long long>(dimensions)) + "\n");
 		message += ("n_x         : " + std::to_string(static_cast<unsigned long long>(n_x)) + "\n");
 		message += ("n_y         : " + std::to_string(static_cast<unsigned long long>(n_z)) + "\n");
@@ -535,32 +535,32 @@ template<typename DATATYPE>
 		return message;
 	}
 	
-template<class DATATYPE>	
-	memory_scope::type memory_unit<DATATYPE>::getScope()
+template<class T>	
+	MemoryType::Type Memory_Unit<T>::getType()
 	{
-		return scope;
+		return type;
 	}
 	
-template<class DATATYPE>
-	size_t memory_unit<DATATYPE>::getMemorySize()
+template<class T>
+	size_t Memory_Unit<T>::getMemorySize()
 	{
 		return memory_size;
 	}
 	
-template<class DATATYPE>
-	size_t memory_unit<DATATYPE>::getSize_x()
+template<class T>
+	size_t Memory_Unit<T>::getSize_x()
 	{
 		return n_x;
 	}
 
-template<class DATATYPE>
-	size_t memory_unit<DATATYPE>::getSize_y()
+template<class T>
+	size_t Memory_Unit<T>::getSize_y()
 	{
 		return n_y;
 	}
 	
-template<class DATATYPE>
-	size_t memory_unit<DATATYPE>::getSize_z()
+template<class T>
+	size_t Memory_Unit<T>::getSize_z()
 	{
 		return n_z;
 	}

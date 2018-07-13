@@ -40,80 +40,83 @@
 //                                                                      //
 // -------------------------------------------------------------------- //
 
-#ifndef _MEMORY_UNIT_
-#define _MEMORY_UNIT_
+#ifndef MEMORY_UNIT
+#define MEMORY_UNIT
 
 #include <stdlib.h> 
 #include "cuda_runtime.h"
 #include <string>
 #include <typeinfo>
 
-namespace memory_scope
+namespace MemoryType
 {
-	enum type {
-		HOST_ONLY,
-		DEVICE_ONLY,
-		PINNED,
-		NON_PINNED
+	enum Type 
+	{
+		host_only,
+		device_only,
+		pinned,
+		non_pinned
 		//TEXTURE,
 	};
 	
-	std::string toString( memory_scope::type scope )
+	std::string toString( Type type )
 	{
 		
-		std::string str_scope = "ERROR";
-		switch(	scope )
+		std::string str_type = "ERROR";
+		switch(	type )
 		{
-			case memory_scope::HOST_ONLY:
-				str_scope = "Host Only";
+			case MemoryType::host_only:
+				str_type = "Host Only";
 				break;
-			case memory_scope::DEVICE_ONLY:
-				str_scope = "Device Only";
+			case MemoryType::device_only:
+				str_type = "Device Only";
 				break;
-			case memory_scope::PINNED:
-				str_scope = "Pinned";
+			case MemoryType::pinned:
+				str_type = "Pinned";
 				break;
-			case memory_scope::NON_PINNED:
-				str_scope = "Non Pinned";
+			case MemoryType::non_pinned:
+				str_type = "Non Pinned";
 				break;
 		}
 		
-		return str_scope;
+		return str_type;
 	}
 	
 	
 		
 }
 
-template<class DATATYPE>struct memory_unit{
+template<class T>struct Memory_Unit
+{
 
 public:
-	DATATYPE *data_host;
-	DATATYPE *data_device;
+	T *data_host;
+	T *data_device;
 
-	memory_unit(std::string name, memory_scope::type scope, int n_x );
-	memory_unit(std::string name, memory_scope::type scope, int n_x, int n_y);
-	memory_unit(std::string name, memory_scope::type scope, int n_x, int n_y, int n_z);
-	memory_unit(std::string name, memory_unit<DATATYPE> *copy);
+	Memory_Unit(std::string name, MemoryType::Type type, int n_x );
+	Memory_Unit(std::string name, MemoryType::Type type, int n_x, int n_y);
+	Memory_Unit(std::string name, MemoryType::Type type, int n_x, int n_y, int n_z);
+	Memory_Unit(std::string name, Memory_Unit<T> *copy);
 	
-	memory_scope::type getScope(void);
+
 
 	bool allocateMemory(std::string &message);
 	bool deallocateMemory(std::string &message);
 	bool copyDeviceToHost(std::string &message);
 	bool copyHostToDevice(std::string &message);
+
+	MemoryType::Type getType();	
+	size_t getMemorySize();
+	size_t getSize_x();
+	size_t getSize_y();
+	size_t getSize_z();
 	
-	size_t getMemorySize(void);
-	size_t getSize_x(void);
-	size_t getSize_y(void);
-	size_t getSize_z(void);
-	
-	std::string toString(void);
+	std::string toString();
 
 private:
 
 	std::string name;
-	memory_scope::type scope;
+	MemoryType::Type type;
 	size_t memory_size;
 	size_t n_x;
 	size_t n_y;
@@ -126,8 +129,8 @@ private:
 //	bool is_device_clone;	
 //	memory_unit<DATATYPE> *primary;
 
-	void initialize(void);
-	void computeMemorySize(void);	
+	void initialize();
+	void computeMemorySize();	
 
 };
 

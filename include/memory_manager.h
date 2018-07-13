@@ -19,8 +19,8 @@
 // along with GADIT.  If not, see <http://www.gnu.org/licenses/>.
 // ----------------------------------------------------------------------------------
 
-#ifndef _MEMORY_MANAGER_
-#define _MEMORY_MANAGER_
+#ifndef MEMORY_MANAGER
+#define MEMORY_MANAGER
 
 #include "../include/memory_unit.h"
 #include <string>
@@ -40,43 +40,43 @@
 // Requirements: At least C++ version 11.                               //
 //                                                                      //
 // -------------------------------------------------------------------- //
-namespace memory_manager
+namespace MemoryManager
 {
 	
-	template<typename DATATYPE, typename ...Types> 
+	template<typename T, typename ...Types> 
 		bool allocateMemory
-			(std::string &message, memory_unit<DATATYPE> *first, Types* ... rest);
+			(std::string &message, Memory_Unit<T> *first, Types* ... rest);
 			
-	template<typename DATATYPE> 
+	template<typename T> 
 		bool allocateMemory
-			(std::string &message, memory_unit<DATATYPE> *first);
+			(std::string &message, Memory_Unit<T> *first);
 	
 	
-	template<typename DATATYPE, typename ...Types> 
+	template<typename T, typename ...Types> 
 		bool deallocateMemory
-			(std::string &message, memory_unit<DATATYPE> *first, Types* ... rest);
+			(std::string &message, Memory_Unit<T> *first, Types* ... rest);
 			
-	template<typename DATATYPE> 
+	template<typename T> 
 		bool deallocateMemory
-			(std::string &message, memory_unit<DATATYPE> *first);
+			(std::string &message, Memory_Unit<T> *first);
 	
 
-	template<typename DATATYPE, typename ...Types>
+	template<typename T, typename ...Types>
 		bool copyDeviceToHost
-			(std::string &message, memory_unit<DATATYPE> *first, Types* ... rest);
+			(std::string &message, Memory_Unit<T> *first, Types* ... rest);
 			
-	template<typename DATATYPE> 
+	template<typename T> 
 		bool copyDeviceToHost
-			(std::string &message, memory_unit<DATATYPE> *first);
+			(std::string &message, Memory_Unit<T> *first);
 
 	
-	template<typename DATATYPE, typename ...Types>
+	template<typename T, typename ...Types>
 		bool copyHostToDevice
-			(std::string &message, memory_unit<DATATYPE> *first, Types* ... rest);
+			(std::string &message, Memory_Unit<T> *first, Types* ... rest);
 			
-	template<typename DATATYPE> 
+	template<typename T> 
 		bool copyHostToDevice
-			(std::string &message, memory_unit<DATATYPE> *first);
+			(std::string &message, Memory_Unit<T> *first);
 	
 }
 
