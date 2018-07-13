@@ -22,7 +22,7 @@
 #ifndef MEMORY_MANAGER
 #define MEMORY_MANAGER
 
-#include "../include/memory_unit.h"
+#include "include/memory_unit.h"
 #include <string>
 
 // -------------------------------------------------------------------- //
@@ -80,6 +80,6 @@ namespace MemoryManager
 	
 }
 
-#include "../src/memory_manager.tpp"
+#include "src/memory_manager.tpp"
 
 #endif

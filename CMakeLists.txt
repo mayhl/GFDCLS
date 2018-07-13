@@ -9,12 +9,20 @@ set(CUDA_64_BIT_DEVICE_CODE ON)
 
 include_directories("${CUDA_INCLUDE_DIRS}")
 
+# Allow tpp files to be included from different directories 
+# without using relative paths.
+include_directories(".")
+
 #add_library(memory_unit SHARED include/memory_unit.h )
 #add_library(memory_manager SHARED include/memory_manager.h )
 
 cuda_add_executable (gadit 
 	include/memory_unit.h
 	include/memory_manager.h 
+	include/dimensions.h 
+	src/dimensions.cpp
+	include/time_interval_tracker.h;
+	src/time_interval_tracker.cpp;
 	src/main.cpp
 #	include/memory_unit.h
 #	src/memory_unit.cpp

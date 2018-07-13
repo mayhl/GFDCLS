@@ -19,8 +19,6 @@
 // along with GADIT.  If not, see <http://www.gnu.org/licenses/>.
 // ----------------------------------------------------------------------------------
 
-#include "../include/memory_unit.h"
-
 
 //////////////////
 // Constructors //
