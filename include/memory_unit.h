@@ -43,48 +43,13 @@
 #ifndef MEMORY_UNIT
 #define MEMORY_UNIT
 
+#include "include/memory_type.h"
+
 #include <stdlib.h> 
 #include "cuda_runtime.h"
 #include <string>
 #include <typeinfo>
 
-namespace MemoryType
-{
-	enum Type 
-	{
-		host_only,
-		device_only,
-		pinned,
-		non_pinned
-		//TEXTURE,
-	};
-	
-	std::string toString( Type type )
-	{
-		
-		std::string str_type = "ERROR";
-		switch(	type )
-		{
-			case MemoryType::host_only:
-				str_type = "Host Only";
-				break;
-			case MemoryType::device_only:
-				str_type = "Device Only";
-				break;
-			case MemoryType::pinned:
-				str_type = "Pinned";
-				break;
-			case MemoryType::non_pinned:
-				str_type = "Non Pinned";
-				break;
-		}
-		
-		return str_type;
-	}
-	
-	
-		
-}
 
 template<class T>struct Memory_Unit
 {
@@ -93,9 +58,9 @@ public:
 	T *data_host;
 	T *data_device;
 
-	Memory_Unit(std::string name, MemoryType::Type type, int n_x );
-	Memory_Unit(std::string name, MemoryType::Type type, int n_x, int n_y);
-	Memory_Unit(std::string name, MemoryType::Type type, int n_x, int n_y, int n_z);
+	Memory_Unit(std::string name, MemoryType::Type type, size_t n_x );
+	Memory_Unit(std::string name, MemoryType::Type type, size_t n_x, size_t n_y);
+	Memory_Unit(std::string name, MemoryType::Type type, size_t n_x, size_t n_y, size_t n_z);
 	Memory_Unit(std::string name, Memory_Unit<T> *copy);
 	
 
@@ -117,10 +82,10 @@ private:
 
 	std::string name;
 	MemoryType::Type type;
-	size_t memory_size;
 	size_t n_x;
 	size_t n_y;
 	size_t n_z;
+	size_t memory_size;
 	unsigned short int dimensions;
 	
 	bool is_host_allocated;

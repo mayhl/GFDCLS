@@ -25,21 +25,21 @@
 //////////////////
 
 template<class T>
-	Memory_Unit<T>::Memory_Unit(std::string name, MemoryType::Type type, int n_x, int n_y, int n_z) :
+	Memory_Unit<T>::Memory_Unit(std::string name, MemoryType::Type type, size_t n_x, size_t n_y, size_t n_z) :
 		name(name), type(type), n_x(n_x), n_y(n_y), n_z(n_z)
 	{
 		initialize();
 	}
 	
 template<class T>
-	Memory_Unit<T>::Memory_Unit(std::string name, MemoryType::Type type, int n_x, int n_y) :
+	Memory_Unit<T>::Memory_Unit(std::string name, MemoryType::Type type, size_t n_x, size_t n_y) :
 		name(name), type(type), n_x(n_x), n_y(n_y), n_z(1)
 	{
 		initialize();
 	}
 	
 template<class T>
-	Memory_Unit<T>::Memory_Unit(std::string name, MemoryType::Type type, int n_x) :
+	Memory_Unit<T>::Memory_Unit(std::string name, MemoryType::Type type, size_t n_x) :
 		name(name), type(type), n_x(n_x), n_y(1), n_z(1)
 	{
 		initialize();
@@ -47,7 +47,7 @@ template<class T>
 
 template<class T>	
 	Memory_Unit<T>::Memory_Unit(std::string name, Memory_Unit<T> *copy) :	
-		name(name), type(copy->type), n_x(copy->n_x), n_y(copy->n_y), n_z(copy->n_z), memory_size(copy->memory_size)
+		name(name), type(copy->type), n_x(copy->n_x), n_y(copy->n_y), n_z(copy->n_z)
 	{
 		initialize();
 	}

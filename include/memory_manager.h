@@ -22,7 +22,9 @@
 #ifndef MEMORY_MANAGER
 #define MEMORY_MANAGER
 
+#include "include/memory_type.h"
 #include "include/memory_unit.h"
+
 #include <string>
 
 // -------------------------------------------------------------------- //
