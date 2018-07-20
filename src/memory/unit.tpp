@@ -25,28 +25,28 @@
 //////////////////
 
 template<class T>
-	Memory_Unit<T>::Memory_Unit(std::string name, MemoryType::Type type, size_t n_x, size_t n_y, size_t n_z) :
+	Memory::Unit<T>::Unit(std::string name, Types::Type type, size_t n_x, size_t n_y, size_t n_z) :
 		name(name), type(type), n_x(n_x), n_y(n_y), n_z(n_z)
 	{
 		initialize();
 	}
 	
 template<class T>
-	Memory_Unit<T>::Memory_Unit(std::string name, MemoryType::Type type, size_t n_x, size_t n_y) :
+	Memory::Unit<T>::Unit(std::string name, Types::Type type, size_t n_x, size_t n_y) :
 		name(name), type(type), n_x(n_x), n_y(n_y), n_z(1)
 	{
 		initialize();
 	}
 	
 template<class T>
-	Memory_Unit<T>::Memory_Unit(std::string name, MemoryType::Type type, size_t n_x) :
+	Memory::Unit<T>::Unit(std::string name, Types::Type type, size_t n_x) :
 		name(name), type(type), n_x(n_x), n_y(1), n_z(1)
 	{
 		initialize();
 	}
 
 template<class T>	
-	Memory_Unit<T>::Memory_Unit(std::string name, Memory_Unit<T> *copy) :	
+	Memory::Unit<T>::Unit(std::string name, Unit<T> *copy) :	
 		name(name), type(copy->type), n_x(copy->n_x), n_y(copy->n_y), n_z(copy->n_z)
 	{
 		initialize();
@@ -58,7 +58,7 @@ template<class T>
 //////////////////////////////
 	
 template<class T>	
-	void Memory_Unit<T>::initialize()
+	void Memory::Unit<T>::initialize()
 	{
 		data_device = NULL;
 		data_host = NULL;
@@ -68,7 +68,7 @@ template<class T>
 	}	
 	
 template<class T>
-	void Memory_Unit<T>::computeMemorySize()
+	void Memory::Unit<T>::computeMemorySize()
 	{
 		memory_size = n_x*n_y*n_z*sizeof(T);
 
@@ -85,7 +85,7 @@ template<class T>
 
 	
 template<typename T> 
-	bool Memory_Unit<T>::allocateMemory(std::string &message)
+	bool Memory::Unit<T>::allocateMemory(std::string &message)
 	{
 
 		cudaError cuda_error_device = cudaSuccess;
@@ -97,19 +97,19 @@ template<typename T>
 		// Allocating memory depending on type.
 		switch (type)
 		{
-		case MemoryType::host_only:
+		case Memory::Types::host_only:
 		
 			if ( !is_host_allocated )
 				data_host = (T*)malloc(memory_size);		
 			break;
 
-		case MemoryType::device_only:
+		case Memory::Types::device_only:
 		
 			if ( !is_device_allocated )
 				cuda_error_device = cudaMalloc((void **)&data_device, memory_size);
 			break;
 
-		case MemoryType::pinned:
+		case Memory::Types::pinned:
 		
 			if ( !is_host_allocated )
 				cuda_error_host = cudaMallocHost((void**)&data_host, memory_size);
@@ -118,7 +118,7 @@ template<typename T>
 				cuda_error_device = cudaMalloc((void **)&data_device, memory_size);
 			break;
 	
-		case MemoryType::non_pinned:
+		case Memory::Types::non_pinned:
 			
 			if ( !is_host_allocated )
 				data_host = (T*)malloc(memory_size);
@@ -136,7 +136,7 @@ template<typename T>
 		// Verifying host memory has been allocated and detecting error type.
 		std::string host_error_message= "ERROR: No Message produce.\n\n";
 
-		if ( type == MemoryType::device_only )
+		if ( type == Memory::Types::device_only )
 			is_host_successful = true;
 		else
 		{
@@ -147,7 +147,7 @@ template<typename T>
 			}
 			else
 			{
-				if (type == MemoryType::pinned )
+				if (type == Memory::Types::pinned )
 				{
 					if (cuda_error_host == cudaSuccess)				
 						is_host_successful = true;		
@@ -174,7 +174,7 @@ template<typename T>
 		// Verifying device memory has been allocated and detecting error type.
 		std::string device_error_message= "ERROR: No Message produce.\n\n";
 		
-		if( type == MemoryType::host_only )
+		if( type == Memory::Types::host_only )
 			is_device_successful = true;
 		else
 		{
@@ -208,7 +208,7 @@ template<typename T>
 		if( is_device_successful && is_host_successful )
 		{
 			is_successful = true;
-			message += "Allocating " + MemoryType::toString(type) + " memory '" + name + "' successful.\n";
+			message += "Allocating " + Memory::Types::toString(type) + " memory '" + name + "' successful.\n";
 			
 		}
 		else
@@ -245,7 +245,7 @@ template<typename T>
 	}
 
 template<typename T>
-	bool Memory_Unit<T>::deallocateMemory(std::string &message)
+	bool Memory::Unit<T>::deallocateMemory(std::string &message)
 	{
 		
 		cudaError cuda_error_device = cudaSuccess;
@@ -256,17 +256,17 @@ template<typename T>
 		
 		switch (type)
 		{
-		case MemoryType::host_only:
+		case Memory::Types::host_only:
 			if (is_host_allocated )
 				free(data_host);
 			break;
 
-		case MemoryType::device_only:
+		case Memory::Types::device_only:
 			if( is_device_allocated )
 				cuda_error_device = cudaFree(data_device);
 			break;
 
-		case MemoryType::pinned:
+		case Memory::Types::pinned:
 			if( is_host_allocated )
 				cuda_error_host = cudaFreeHost(data_host);
 			
@@ -274,7 +274,7 @@ template<typename T>
 				cuda_error_device = cudaFree(data_device);
 			break;
 
-		case MemoryType::non_pinned:
+		case Memory::Types::non_pinned:
 			if( is_host_allocated )
 				free(data_host);
 			if( is_device_allocated )
@@ -289,7 +289,7 @@ template<typename T>
 		// Verifying host memory has been deallocated and detecting error type.
 		std::string host_error_message = "ERROR: No Message produce.\n\n";
 		
-		if ( type == MemoryType::device_only )
+		if ( type == Memory::Types::device_only )
 			is_host_successful = true;
 		else
 		{
@@ -301,7 +301,7 @@ template<typename T>
 			}
 			else
 			{
-				if( type == MemoryType::pinned )
+				if( type == Memory::Types::pinned )
 				{
 					if( cuda_error_host == cudaSuccess )					
 						is_host_successful = true;
@@ -328,7 +328,7 @@ template<typename T>
 		// Verifying device memory has been deallocated and detecting error type.	
 		std::string device_error_message = "ERROR: No Message produce.\n\n";;
 		
-		if ( type == MemoryType::host_only )
+		if ( type == Memory::Types::host_only )
 			is_device_successful = true;
 		else
 		{
@@ -375,7 +375,7 @@ template<typename T>
 		if( is_device_successful && is_host_successful )
 		{
 			is_successful = true;
-			message += "Deallocating " + MemoryType::toString(type) + " memory '" + name + "' successful.\n";
+			message += "Deallocating " + Memory::Types::toString(type) + " memory '" + name + "' successful.\n";
 			
 		}
 		else
@@ -413,7 +413,7 @@ template<typename T>
 	};	
 	
 template<typename T>
-	bool Memory_Unit<T>::copyDeviceToHost(std::string &message)
+	bool Memory::Unit<T>::copyDeviceToHost(std::string &message)
 	{
 		
 		cudaError cuda_error = cudaSuccess;
@@ -421,7 +421,7 @@ template<typename T>
 		
 		std::string submessage;
 		
-		if( type == MemoryType::pinned || type == MemoryType::non_pinned )
+		if( type == Memory::Types::pinned || type == Memory::Types::non_pinned )
 		{
 			cuda_error = cudaMemcpy(data_host, data_device, memory_size, cudaMemcpyDeviceToHost);
 			
@@ -434,7 +434,7 @@ template<typename T>
 			else
 			{
 				is_successful = true;	
-				message += "Copying device to host for " + MemoryType::toString(type) + " memory '" + name + "' successful.\n";
+				message += "Copying device to host for " + Memory::Types::toString(type) + " memory '" + name + "' successful.\n";
 			}
 		}
 		else
@@ -462,7 +462,7 @@ template<typename T>
 	}
 
 template<typename T>
-	bool Memory_Unit<T>::copyHostToDevice(std::string &message)
+	bool Memory::Unit<T>::copyHostToDevice(std::string &message)
 	{
 		
 		cudaError cuda_error = cudaSuccess;
@@ -470,7 +470,7 @@ template<typename T>
 		
 		std::string submessage;
 		
-		if( type == MemoryType::pinned || type == MemoryType::non_pinned )
+		if( type == Memory::Types::pinned || type == Memory::Types::non_pinned )
 		{
 			cuda_error = cudaMemcpy(data_device, data_host, memory_size, cudaMemcpyHostToDevice);
 			
@@ -483,7 +483,7 @@ template<typename T>
 			else
 			{
 				is_successful = true;	
-				message += "Copying host to device for " + MemoryType::toString(type) + " memory '" + name + "' successful.\n";
+				message += "Copying host to device for " + Memory::Types::toString(type) + " memory '" + name + "' successful.\n";
 			}
 		}
 		else
@@ -517,12 +517,12 @@ template<typename T>
 /////////////////		
 	
 template<typename T>
-	std::string Memory_Unit<T>::toString()
+	std::string Memory::Unit<T>::toString()
 	{
 		std::string message = "";
 		
 		message += ("Name        : " + name + "\n");
-		message += ("Memory Type : " + MemoryType::toString(type) + "\n");
+		message += ("Memory Type : " + Memory::Types::toString(type) + "\n");
 		message += ("Data Type   : " + std::string(typeid(T).name()) + "\n");
 		message += ("Dims        : " + std::to_string(static_cast<unsigned long long>(dimensions)) + "\n");
 		message += ("n_x         : " + std::to_string(static_cast<unsigned long long>(n_x)) + "\n");
@@ -534,31 +534,31 @@ template<typename T>
 	}
 	
 template<class T>	
-	MemoryType::Type Memory_Unit<T>::getType()
+	Types::Type Memory::Unit<T>::getType()
 	{
 		return type;
 	}
 	
 template<class T>
-	size_t Memory_Unit<T>::getMemorySize()
+	size_t Memory::Unit<T>::getMemorySize()
 	{
 		return memory_size;
 	}
 	
 template<class T>
-	size_t Memory_Unit<T>::getSize_x()
+	size_t Memory::Unit<T>::getSize_x()
 	{
 		return n_x;
 	}
 
 template<class T>
-	size_t Memory_Unit<T>::getSize_y()
+	size_t Memory::Unit<T>::getSize_y()
 	{
 		return n_y;
 	}
 	
 template<class T>
-	size_t Memory_Unit<T>::getSize_z()
+	size_t Memory::Unit<T>::getSize_z()
 	{
 		return n_z;
 	}

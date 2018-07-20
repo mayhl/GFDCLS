@@ -40,18 +40,21 @@
 
 #include <string>
 
-namespace MemoryType
+namespace Memory
 {
-	enum Type 
+	namespace Types
 	{
-		host_only,
-		device_only,
-		pinned,
-		non_pinned
-		//TEXTURE,
-	};
-	
-	std::string toString( Type type );
+		enum Type 
+		{
+			host_only,
+			device_only,
+			pinned,
+			non_pinned
+			//TEXTURE,
+		};
+		
+		std::string toString( Type type );
+	}
 	
 };
 

@@ -50,63 +50,65 @@
 #include <string>
 #include <typeinfo>
 
-
-template<class T> class Memory_Unit
+namespace Memory
 {
+	template<class T> class Unit
+	{
 
-public:
-	T *data_host;
-	T *data_device;
+	public:
+		T *data_host;
+		T *data_device;
 
-	
-	Memory_Unit(){};
-	Memory_Unit(std::string name, MemoryType::Type type, size_t n_x );
-	Memory_Unit(std::string name, MemoryType::Type type, size_t n_x, size_t n_y);
-	Memory_Unit(std::string name, MemoryType::Type type, size_t n_x, size_t n_y, size_t n_z);
-	Memory_Unit(std::string name, Memory_Unit<T> *copy);
-	
-
-
-	bool allocateMemory(std::string &message);
-	bool deallocateMemory(std::string &message);
-	bool copyDeviceToHost(std::string &message);
-	bool copyHostToDevice(std::string &message);
-
-	MemoryType::Type getType();	
-	size_t getMemorySize();
-	size_t getSize_x();
-	size_t getSize_y();
-	size_t getSize_z();
-	
-	std::string toString();
-
-private:
-
-	std::string name;
-	MemoryType::Type type;
-	size_t n_x;
-	size_t n_y;
-	size_t n_z;
-	size_t memory_size;
-	unsigned short int dimensions;
-	
-	bool is_host_allocated;
-	bool is_device_allocated;
-	
-//	bool is_device_clone;	
-//	memory_unit<DATATYPE> *primary;
-
-	void initialize();
-	void computeMemorySize();	
-
-};
+		
+		Unit(){};
+		Unit(std::string name, Types::Type type, size_t n_x );
+		Unit(std::string name, Types::Type type, size_t n_x, size_t n_y);
+		Unit(std::string name, Types::Type type, size_t n_x, size_t n_y, size_t n_z);
+		Unit(std::string name, Unit<T> *copy);
+		
 
 
-// Templated classes can not be seperated into header
-// files and source files, therefore, source file
-// is include here.
-#include "src/memory/unit.tpp"
+		bool allocateMemory(std::string &message);
+		bool deallocateMemory(std::string &message);
+		bool copyDeviceToHost(std::string &message);
+		bool copyHostToDevice(std::string &message);
 
+		Types::Type getType();	
+		size_t getMemorySize();
+		size_t getSize_x();
+		size_t getSize_y();
+		size_t getSize_z();
+		
+		std::string toString();
+
+	private:
+
+		std::string name;
+		Types::Type type;
+		size_t n_x;
+		size_t n_y;
+		size_t n_z;
+		size_t memory_size;
+		unsigned short int dimensions;
+		
+		bool is_host_allocated;
+		bool is_device_allocated;
+		
+	//	bool is_device_clone;	
+	//	memory_unit<DATATYPE> *primary;
+
+		void initialize();
+		void computeMemorySize();	
+
+	};
+
+
+	// Templated classes can not be seperated into header
+	// files and source files, therefore, source file
+	// is include here.
+	#include "src/memory/unit.tpp"
+
+}
 
 
 #endif

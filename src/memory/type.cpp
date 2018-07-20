@@ -21,22 +21,22 @@
 
 #include "include/memory/type.h"
 
-std::string MemoryType::toString( Type type )
+std::string Memory::Types::toString( Type type )
 {
 	
 	std::string str_type = "ERROR";
 	switch(	type )
 	{
-		case MemoryType::host_only:
+		case Memory::Types::host_only:
 			str_type = "Host Only";
 			break;
-		case MemoryType::device_only:
+		case Memory::Types::device_only:
 			str_type = "Device Only";
 			break;
-		case MemoryType::pinned:
+		case Memory::Types::pinned:
 			str_type = "Pinned";
 			break;
-		case MemoryType::non_pinned:
+		case Memory::Types::non_pinned:
 			str_type = "Non Pinned";
 			break;
 	}

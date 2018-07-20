@@ -42,45 +42,48 @@
 // Requirements: At least C++ version 11.                               //
 //                                                                      //
 // -------------------------------------------------------------------- //
-namespace MemoryManager
+namespace Memory
 {
-	
-	template<typename T, typename ...Types> 
-		bool allocateMemory
-			(std::string &message, Memory_Unit<T> *first, Types* ... rest);
-			
-	template<typename T> 
-		bool allocateMemory
-			(std::string &message, Memory_Unit<T> *first);
-	
-	
-	template<typename T, typename ...Types> 
-		bool deallocateMemory
-			(std::string &message, Memory_Unit<T> *first, Types* ... rest);
-			
-	template<typename T> 
-		bool deallocateMemory
-			(std::string &message, Memory_Unit<T> *first);
-	
+	namespace Manager
+	{
+		template<typename T, typename ...Types> 
+			bool allocateMemory
+				(std::string &message, Unit<T> *first, Types* ... rest);
+				
+		template<typename T> 
+			bool allocateMemory
+				(std::string &message, Unit<T> *first);
+		
+		
+		template<typename T, typename ...Types> 
+			bool deallocateMemory
+				(std::string &message, Unit<T> *first, Types* ... rest);
+				
+		template<typename T> 
+			bool deallocateMemory
+				(std::string &message, Unit<T> *first);
+		
 
-	template<typename T, typename ...Types>
-		bool copyDeviceToHost
-			(std::string &message, Memory_Unit<T> *first, Types* ... rest);
-			
-	template<typename T> 
-		bool copyDeviceToHost
-			(std::string &message, Memory_Unit<T> *first);
+		template<typename T, typename ...Types>
+			bool copyDeviceToHost
+				(std::string &message, Unit<T> *first, Types* ... rest);
+				
+		template<typename T> 
+			bool copyDeviceToHost
+				(std::string &message, Unit<T> *first);
 
+		
+		template<typename T, typename ...Types>
+			bool copyHostToDevice
+				(std::string &message, Unit<T> *first, Types* ... rest);
+				
+		template<typename T> 
+			bool copyHostToDevice
+				(std::string &message, Unit<T> *first);
 	
-	template<typename T, typename ...Types>
-		bool copyHostToDevice
-			(std::string &message, Memory_Unit<T> *first, Types* ... rest);
-			
-	template<typename T> 
-		bool copyHostToDevice
-			(std::string &message, Memory_Unit<T> *first);
-	
-}
+	};
+
+};
 
 #include "src/memory/manager.tpp"
 

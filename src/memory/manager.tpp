@@ -25,7 +25,7 @@
 ///////////////////////////////////////////////////////////
 
 template<typename T, typename ...Types>
-	bool MemoryManager::allocateMemory(std::string &message, Memory_Unit<T> *first, Types* ... rest)
+	bool Memory::Manager::allocateMemory(std::string &message, Unit<T> *first, Types* ... rest)
 	{
 		if ( allocateMemory(message,first) )
 			return allocateMemory(message,rest...);
@@ -34,7 +34,7 @@ template<typename T, typename ...Types>
 	}
 
 template<typename T> 
-	bool MemoryManager::allocateMemory(std::string &message, Memory_Unit<T> *first)
+	bool Memory::Manager::allocateMemory(std::string &message, Unit<T> *first)
 	{
 		return first->allocateMemory(message);
 	}
@@ -45,7 +45,7 @@ template<typename T>
 ///////////////////////////////////////////////////////////
 
 template<typename T, typename ...Types>
-	bool MemoryManager::deallocateMemory(std::string &message, Memory_Unit<T> *first, Types* ... rest)
+	bool Memory::Manager::deallocateMemory(std::string &message, Unit<T> *first, Types* ... rest)
 	{
 		if ( deallocateMemory(message, first) )
 			return deallocateMemory(message, rest...);
@@ -54,7 +54,7 @@ template<typename T, typename ...Types>
 	}
 
 template<typename T>
-	bool MemoryManager::deallocateMemory(std::string &message, Memory_Unit<T> *first)
+	bool Memory::Manager::deallocateMemory(std::string &message, Unit<T> *first)
 	{
 		return first->deallocateMemory(message);
 	};
@@ -65,7 +65,7 @@ template<typename T>
 ///////////////////////////////////////////////////////////
 	
 template<typename T, typename ...Types>
-	bool MemoryManager::copyDeviceToHost(std::string &message, Memory_Unit<T> *first, Types* ... rest)
+	bool Memory::Manager::copyDeviceToHost(std::string &message, Unit<T> *first, Types* ... rest)
 	{
 		if (copyDeviceToHost(message, first))
 			return copyDeviceToHost(message, rest...);
@@ -74,7 +74,7 @@ template<typename T, typename ...Types>
 	}
 
 template<typename T>
-	bool MemoryManager::copyDeviceToHost(std::string &message, Memory_Unit<T> *first)
+	bool Memory::Manager::copyDeviceToHost(std::string &message, Unit<T> *first)
 	{
 		return first->copyDeviceToHost(message);
 	}
@@ -84,7 +84,7 @@ template<typename T>
 ///////////////////////////////////////////////////////////
 	
 template<typename T, typename ...Types>
-	bool MemoryManager::copyHostToDevice(std::string &message, Memory_Unit<T> *first, Types* ... rest)
+	bool Memory::Manager::copyHostToDevice(std::string &message, Unit<T> *first, Types* ... rest)
 	{
 		if ( copyHostToDevice(message, first) )
 			return copyHostToDevice(message, rest...);
@@ -93,7 +93,7 @@ template<typename T, typename ...Types>
 	}
 
 template<typename T>
-	bool MemoryManager::copyHostToDevice(std::string &message, Memory_Unit<T> *first)
+	bool Memory::Manager::copyHostToDevice(std::string &message, Unit<T> *first)
 	{
 		return first->copyHostToDevice(message);
 	}
