@@ -19,7 +19,7 @@
 // along with GADIT.  If not, see <http://www.gnu.org/licenses/>.
 // ----------------------------------------------------------------------------------
 
-#include "include/memory_type.h"
+#include "include/memory/type.h"
 
 std::string MemoryType::toString( Type type )
 {

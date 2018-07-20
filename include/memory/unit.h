@@ -43,7 +43,7 @@
 #ifndef MEMORY_UNIT
 #define MEMORY_UNIT
 
-#include "include/memory_type.h"
+#include "include/memory/type.h"
 
 #include <stdlib.h> 
 #include "cuda_runtime.h"
@@ -51,13 +51,15 @@
 #include <typeinfo>
 
 
-template<class T>struct Memory_Unit
+template<class T> class Memory_Unit
 {
 
 public:
 	T *data_host;
 	T *data_device;
 
+	
+	Memory_Unit(){};
 	Memory_Unit(std::string name, MemoryType::Type type, size_t n_x );
 	Memory_Unit(std::string name, MemoryType::Type type, size_t n_x, size_t n_y);
 	Memory_Unit(std::string name, MemoryType::Type type, size_t n_x, size_t n_y, size_t n_z);
@@ -99,9 +101,12 @@ private:
 
 };
 
+
 // Templated classes can not be seperated into header
 // files and source files, therefore, source file
 // is include here.
-#include "./src/memory_unit.tpp"
+#include "src/memory/unit.tpp"
+
+
 
 #endif

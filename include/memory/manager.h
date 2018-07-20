@@ -22,8 +22,8 @@
 #ifndef MEMORY_MANAGER
 #define MEMORY_MANAGER
 
-#include "include/memory_type.h"
-#include "include/memory_unit.h"
+#include "include/memory/type.h"
+#include "include/memory/unit.h"
 
 #include <string>
 
@@ -82,6 +82,6 @@ namespace MemoryManager
 	
 }
 
-#include "src/memory_manager.tpp"
+#include "src/memory/manager.tpp"
 
 #endif

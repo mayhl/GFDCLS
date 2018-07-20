@@ -562,3 +562,11 @@ template<class T>
 	{
 		return n_z;
 	}
+	
+	
+
+
+
+
+//template class Memory_Unit<double>;
+//template class Memory_Unit<char>;	
