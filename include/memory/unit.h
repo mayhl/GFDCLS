@@ -40,10 +40,11 @@
 //                                                                      //
 // -------------------------------------------------------------------- //
 
-#ifndef MEMORY_UNIT
-#define MEMORY_UNIT
+#ifndef MEMORY_UNIT_H
+#define MEMORY_UNIT_H
 
 #include "include/memory/type.h"
+#include "include/memory/base_unit.h"
 
 #include <stdlib.h> 
 #include "cuda_runtime.h"
@@ -52,52 +53,31 @@
 
 namespace Memory
 {
-	template<class T> class Unit
+	template<class T> class Unit : public Base_Unit
 	{
 
 	public:
 		T *data_host;
 		T *data_device;
 
-		
-		Unit(){};
-		Unit(std::string name, Types::Type type, size_t n_x );
-		Unit(std::string name, Types::Type type, size_t n_x, size_t n_y);
 		Unit(std::string name, Types::Type type, size_t n_x, size_t n_y, size_t n_z);
+		Unit(std::string name, Types::Type type, dim3 dimensions );
 		Unit(std::string name, Unit<T> *copy);
 		
-
-
 		bool allocateMemory(std::string &message);
 		bool deallocateMemory(std::string &message);
 		bool copyDeviceToHost(std::string &message);
 		bool copyHostToDevice(std::string &message);
 
-		Types::Type getType();	
-		size_t getMemorySize();
-		size_t getSize_x();
-		size_t getSize_y();
-		size_t getSize_z();
-		
 		std::string toString();
+
 
 	private:
 
-		std::string name;
-		Types::Type type;
-		size_t n_x;
-		size_t n_y;
-		size_t n_z;
-		size_t memory_size;
-		unsigned short int dimensions;
-		
+		void initialize();
 		bool is_host_allocated;
 		bool is_device_allocated;
 		
-	//	bool is_device_clone;	
-	//	memory_unit<DATATYPE> *primary;
-
-		void initialize();
 		void computeMemorySize();	
 
 	};
@@ -106,9 +86,9 @@ namespace Memory
 	// Templated classes can not be seperated into header
 	// files and source files, therefore, source file
 	// is include here.
-	#include "src/memory/unit.tpp"
 
 }
 
+#include "src/memory/unit.tpp"
 
 #endif
