@@ -1,3 +1,33 @@
+// ----------------------------------------------------------------------------------
+// Copyright 2016-2018 Michael-Angelo Yick-Hang Lam
+//
+// The development of this software was supported by the National Science Foundation
+// (NSF) Grant Number DMS-1211713.
+//
+// This file is part of GADIT.
+//
+// GADIT is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License version 3 as published by
+// the Free Software Foundation.
+//
+// GADIT is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with GADIT.  If not, see <http://www.gnu.org/licenses/>.
+// ----------------------------------------------------------------------------------
+
+// -------------------------------------------------------------------- //
+//                                                                      //
+// Memory Base Unit v1.0                                                //
+//                                                                      //
+// Purpose: Template-free interface for class template Memory Unit.     // 
+//                                                                      //
+// -------------------------------------------------------------------- //
+
+
 #ifndef MEMORY_BASE_UNIT
 #define MEMORY_BASE_UNIT
 
@@ -21,9 +51,6 @@ namespace Memory
 			virtual bool copyDeviceToHost(std::string &message) = 0;
 			virtual bool copyHostToDevice(std::string &message) = 0;
 
-		private:
-
-		//	virtual void initialize() = 0;
 		protected:
 
 			std::string getName();
