@@ -28,8 +28,8 @@
 // -------------------------------------------------------------------- //
 
 
-#ifndef MEMORY_BASE_UNIT
-#define MEMORY_BASE_UNIT
+#ifndef MEMORY_BASE_UNIT_H
+#define MEMORY_BASE_UNIT_H
 
 #include <stdlib.h> 
 #include "cuda_runtime.h"
@@ -51,9 +51,11 @@ namespace Memory
 			virtual bool copyDeviceToHost(std::string &message) = 0;
 			virtual bool copyHostToDevice(std::string &message) = 0;
 
+			bool compareDimensions(Base_Unit *other, std::string &message);
+			std::string getName();
+
 		protected:
 
-			std::string getName();
 			Types::Type getType();
 			size_t getMemorySize();
 
