@@ -48,7 +48,7 @@ namespace Memory
 
 // Note: Until more function templates are added, a seperated .tpp source file
 //       was not added to avoid extraneous files.
-template<typename D> bool isMemoryUnitsSameSubroutine(Memory::Base_Unit *base_primary, Memory::Base_Unit *base_secondary )
+template<typename D> bool Memory::isMemoryUnitsSameSubroutine(Memory::Base_Unit *base_primary, Memory::Base_Unit *base_secondary )
 {
 	Memory::Unit<D> *derived_primary;
 	Memory::Unit<D> *derived_secondary;
