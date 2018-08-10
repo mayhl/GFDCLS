@@ -59,13 +59,12 @@ namespace Memory
 	{
 
 	public:
-		T *data_host;
-		T *data_device;
-
 		Unit(std::string name, Types::Type type, size_t n_x, size_t n_y, size_t n_z);
 		Unit(std::string name, Types::Type type, dim3 dimensions );
 		Unit(std::string name, Unit<T> *copy);
-		
+
+		bool linkToPrimaryUnit(Base_Unit *base_unit, std::string &message);
+
 		bool allocateMemory(std::string &message);
 		bool deallocateMemory(std::string &message);
 		bool copyDeviceToHost(std::string &message);
@@ -73,8 +72,16 @@ namespace Memory
 
 		std::string toString();
 
+		T* getDataHost();
+		T* getDataDevice();
 
 	private:
+		T *data_host;
+		T *data_device;
+
+		bool is_secondary_linked_memory;
+		Unit<T> *primary_unit;
+
 
 		bool allocateNonPinnedHostMemory( std::string &message );
 		bool allocatePinnedHostMemory(std::string &message);

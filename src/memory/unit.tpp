@@ -60,6 +60,7 @@ namespace Memory
 		data_host = NULL;
 		is_host_allocated = false;
 		is_device_allocated = false;
+		is_secondary_linked_memory = false;
 		computeMemorySize();
 	}
 
@@ -74,7 +75,53 @@ namespace Memory
 		if (n_z > 1) { dimensions++; }
 	}
 
+	//////////////////////////
+	// Link to Primary Unit //
+	//////////////////////////
 
+	template<class T>
+	bool Unit<T>::linkToPrimaryUnit(Base_Unit *base_unit, std::string &message)
+	{
+
+		primary_unit = dynamic_cast<Unit<T>*>(base_unit);
+
+		if (primary_unit)
+		{
+			is_secondary_linked_memory = true;
+			message = "SUCCESS: Linked secondary Memory::Unit<T> '" + name + "'";
+			message += " to Memory::Unit<T> '" + base_unit->getName() + "'.\n";
+		}
+		else 
+		{
+			is_secondary_linked_memory = false;
+			message = "ERROR: Failed to cast base class Memory::Base_Unit '" + base_unit->getName() + "'";
+			message = " to dervied class template Memory::Unit<T>.\n";
+		}
+
+		return is_secondary_linked_memory;
+	}
+
+	/////////////
+	// Getters //
+	/////////////
+
+	template<class T>
+	T* Unit<T>::getDataDevice()
+	{
+		if (is_secondary_linked_memory)
+			return primary_unit->getDataDevice();
+		else
+			return data_device;	
+	}
+
+	template<class T>
+	T* Unit<T>::getDataHost()
+	{
+		if (is_secondary_linked_memory)
+			return primary_unit->getDataHost();
+		else
+			return data_host;
+	}
 	////////////////////////
 	// Memory Subroutines //
 	////////////////////////
@@ -84,6 +131,17 @@ namespace Memory
 	template<typename T>
 	bool Unit<T>::allocateMemory(std::string &message)
 	{
+		// Skipping allocates if unit is a secondary unit
+		if (is_secondary_linked_memory)
+		{
+			message += "SUCCESS: Not allocating memory, ";
+			message += Types::toString(type) + " memory '" + name + "'";
+			message += " is a secondary unit to '";
+			message	+= Types::toString(primary_unit->getType() ) + " memory '" + primary_unit->getName() + "'.\n";
+			 
+			return true;
+		}
+
 		bool is_device_successful = true;
 		bool is_host_successful = true;
 
@@ -142,8 +200,6 @@ namespace Memory
 
 		data_host = (T*)malloc(memory_size);
 
-		data_host = NULL;
-
 		if (data_host)
 		{
 			is_host_allocated = true;
@@ -166,7 +222,7 @@ namespace Memory
 		}
 
 		cudaError error = cudaMallocHost((void**)&data_host, memory_size);
-		error = cudaErrorLaunchOutOfResources;
+
 		if (error == cudaSuccess)
 		{
 			is_host_allocated = true;
@@ -196,7 +252,6 @@ namespace Memory
 
 		cudaError error = cudaMalloc((void **)&data_device, memory_size);
 
-		error = cudaErrorLaunchOutOfResources;
 		if (error == cudaSuccess)
 		{
 			is_device_allocated = true;
@@ -221,6 +276,17 @@ namespace Memory
 	template<typename T>
 	bool Unit<T>::deallocateMemory(std::string &message)
 	{
+
+		// Skipping deallocates if unit is a secondary unit
+		if (is_secondary_linked_memory)
+		{
+			message += "SUCCESS: Not deallocating memory, ";
+			message += Types::toString(type) + " memory '" + name + "'";
+			message += " is a secondary unit to '";
+			message += Types::toString(primary_unit->getType()) + " memory '" + primary_unit->getName() + "'.\n";
+
+			return true;
+		}
 
 		std::string host_message = "";
 		std::string device_message = "";

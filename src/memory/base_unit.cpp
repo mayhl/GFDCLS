@@ -9,7 +9,6 @@ namespace Memory
 	Base_Unit::Base_Unit(std::string name, Types::Type type, dim3 dimensions ) :
 		name(name), type(type), n_x(dimensions.x), n_y(dimensions.y), n_z(dimensions.z) {}
 
-
 	bool Base_Unit::compareDimensions(Base_Unit *other, std::string &message)
 	{
 		bool is_same = false;
@@ -47,12 +46,10 @@ namespace Memory
 		return n_x;
 	}
 
-
 	size_t Base_Unit::getSizeY()
 	{
 		return n_y;
 	}
-
 
 	size_t Base_Unit::getSizeZ()
 	{
