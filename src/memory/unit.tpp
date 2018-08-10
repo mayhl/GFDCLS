@@ -75,433 +75,364 @@ namespace Memory
 	}
 
 
-	///////////////////////
-	// Memory Operations //
-	///////////////////////
+	////////////////////////
+	// Memory Subroutines //
+	////////////////////////
 
+	// Allocate Subroutines
 
 	template<typename T>
 	bool Unit<T>::allocateMemory(std::string &message)
 	{
+		bool is_device_successful = true;
+		bool is_host_successful = true;
 
-		cudaError cuda_error_device = cudaSuccess;
-		cudaError cuda_error_host = cudaSuccess;
-		bool is_device_successful = false;
-		bool is_host_successful = false;
-		bool is_successful = false;
+		std::string host_message = "";
+		std::string device_message = "";
 
 		// Allocating memory depending on type.
 		switch (type)
 		{
 		case Types::host_only:
-
-			if (!is_host_allocated)
-				data_host = (T*)malloc(memory_size);
+			is_host_successful = allocateNonPinnedHostMemory(host_message);
 			break;
 
 		case Types::device_only:
-
-			if (!is_device_allocated)
-				cuda_error_device = cudaMalloc((void **)&data_device, memory_size);
+			is_device_successful = allocateDeviceMemory(device_message);
 			break;
 
 		case Types::pinned:
-
-			if (!is_host_allocated)
-				cuda_error_host = cudaMallocHost((void**)&data_host, memory_size);
-
-			if (!is_device_allocated)
-				cuda_error_device = cudaMalloc((void **)&data_device, memory_size);
+			is_host_successful = allocatePinnedHostMemory(host_message);
+			is_device_successful = allocateDeviceMemory(device_message);
 			break;
 
 		case Types::non_pinned:
+			is_host_successful = allocateNonPinnedHostMemory(host_message);
+			is_device_successful = allocateDeviceMemory(device_message);
+		}
 
-			if (!is_host_allocated)
-				data_host = (T*)malloc(memory_size);
+		bool is_successful = (is_host_successful && is_device_successful);
 
-			if (!is_device_allocated)
-				cuda_error_device = cudaMalloc((void **)&data_device, memory_size);
+		// Constructing return message
+		if (is_successful)
+			message += "SUCCESS: Allocated " + Types::toString(type) + " memory '" + name + "'.\n";
+		else
+		{
+			// If statements used to avoid introduction of indent in blank strings
+			if (!is_host_successful) StringProcessing::indentLines(host_message);
+			if (!is_device_successful) StringProcessing::indentLines(device_message);
+
+			message += "ERROR: Failure in allocating " + Types::toString(type) + " memory '" + name + "'.\n";
+			message += host_message;
+			message += device_message;
+		}
+	
+		return is_successful;
+
+	}
+
+	template<typename T>
+	bool Unit<T>::allocateNonPinnedHostMemory(std::string &message)
+	{
+		if (is_host_allocated)
+		{
+			message = "ERROR: Host memory already allocated.\n";
+			return false;
+		}
+
+		data_host = (T*)malloc(memory_size);
+
+		data_host = NULL;
+
+		if (data_host)
+		{
+			is_host_allocated = true;
+			return true;
+		}
+		else
+		{
+			message = "ERROR: Host memory not allocated, host pointer is null.\n";
+			return false;
+		}
+	}
+
+	template<typename T>
+	bool Unit<T>::allocatePinnedHostMemory(std::string &message)
+	{
+		if (is_host_allocated)
+		{
+			message = "ERROR: Host memory already allocated.\n";
+			return false;
+		}
+
+		cudaError error = cudaMallocHost((void**)&data_host, memory_size);
+		error = cudaErrorLaunchOutOfResources;
+		if (error == cudaSuccess)
+		{
+			is_host_allocated = true;
+			return true;
+		}
+		else
+		{
+			std::string submessage;
+			StringProcessing::cudaErrorToString(error,submessage);
+			StringProcessing::indentLines(submessage);
+
+			message = "ERROR: Host memory not allocated correctly:\n";
+			message += submessage;
+			return false;
+		}
+
+	}
+
+	template<typename T>
+	bool Unit<T>::allocateDeviceMemory(std::string &message)
+	{
+		if (is_device_allocated)
+		{
+			message = "ERROR: Device memory already allocated.\n";
+			return false;
+		}
+
+		cudaError error = cudaMalloc((void **)&data_device, memory_size);
+
+		error = cudaErrorLaunchOutOfResources;
+		if (error == cudaSuccess)
+		{
+			is_device_allocated = true;
+			return true;
+		}
+		else
+		{
+			std::string submessage;
+			StringProcessing::cudaErrorToString(error, submessage);
+			StringProcessing::indentLines(submessage);
+
+			message = "ERROR: Device memory not allocated correctly:\n";
+			message += submessage;
+
+			return false;
+		}
+
+	}
+
+	// Deallocate Subroutines
+
+	template<typename T>
+	bool Unit<T>::deallocateMemory(std::string &message)
+	{
+
+		std::string host_message = "";
+		std::string device_message = "";
+		bool is_device_successful = true;
+		bool is_host_successful = true;
+
+		// Deallocating memory depending on type.
+		switch (type)
+		{
+		case Types::host_only:
+			is_host_successful = deallocateNonPinnedHostMemory(host_message);
+			break;
+		case Types::device_only:
+			is_device_successful = deallocateDeviceMemory(device_message);
 			break;
 
+		case Types::pinned:
+			is_host_successful = deallocateNonPinnedHostMemory(host_message);
+			is_device_successful = deallocateDeviceMemory(device_message);
+			break;
+
+		case Types::non_pinned:
+			is_host_successful = deallocateNonPinnedHostMemory(host_message);
+			is_device_successful = deallocateDeviceMemory(device_message);
+			break;
 		}
 
-		////////////////////////////////
-		// NOTE: Clean up logic below //
-		////////////////////////////////
+		bool is_successful = (is_host_successful && is_device_successful);
 
-		// Verifying host memory has been allocated and detecting error type.
-		std::string host_error_message = "ERROR: No Message produce.\n\n";
-
-		if (type == Types::device_only)
-			is_host_successful = true;
+		// Constructing return message
+		if (is_successful)
+			message += "SUCCESS: Deallocated " + Types::toString(type) + " memory '" + name + "'.\n";
 		else
 		{
-			if (is_host_allocated)
-			{
-				is_host_successful = false;
-				host_error_message = "Memory has been previously allocated.\n\n";
-			}
-			else
-			{
-				if (type == Types::pinned)
-				{
-					if (cuda_error_host == cudaSuccess)
-						is_host_successful = true;
-					else
-					{
-						is_host_successful = false;
-						host_error_message = ("Type    : " + std::string(cudaGetErrorName(cuda_error_host)) + "\n");
-						host_error_message += ("Message : " + std::string(cudaGetErrorString(cuda_error_host)) + "\n\n");
-					}
-				}
-				else
-				{
-					if (data_host)
-						is_host_successful = true;
-					else
-					{
-						is_host_successful = false;
-						host_error_message = "Memory not allocated correctly, host pointer is null.\n\n";
-					}
-				}
-			}
-		}
+			// If statements used to avoid introduction of indent in blank strings
+			if (!is_host_successful) StringProcessing::indentLines(host_message);
+			if (!is_device_successful) StringProcessing::indentLines(device_message);
 
-		// Verifying device memory has been allocated and detecting error type.
-		std::string device_error_message = "ERROR: No Message produce.\n\n";
-
-		if (type == Types::host_only)
-			is_device_successful = true;
-		else
-		{
-			if (is_device_allocated)
-			{
-				is_device_successful = false;
-				device_error_message = "Memory has been previously allocated.\n\n";
-			}
-			else
-			{
-				if (cuda_error_device == cudaSuccess)
-					is_device_successful = true;
-				else
-				{
-					is_device_successful = false;
-					device_error_message = ("Type    : " + std::string(cudaGetErrorName(cuda_error_device)) + "\n");
-					device_error_message += ("Message : " + std::string(cudaGetErrorString(cuda_error_device)) + "\n\n");
-				}
-			}
-		}
-
-		// Setting flags
-		if (is_host_successful)
-			is_host_allocated = true;
-
-		if (is_device_successful)
-			is_device_allocated = true;
-
-
-		// Constructing output message.
-		if (is_device_successful && is_host_successful)
-		{
-			is_successful = true;
-			message += "SUCCESS: Allocated " + Types::toString(type) + " memory '" + name + "'.\n";
-
-		}
-		else
-		{
-			is_successful = false;
-
-			message += "\n------------------------\n";
-			message += "     ALLOCATE ERROR     ";
-			message += "\n------------------------\n\n";
-
-			if (!is_host_successful)
-			{
-				message += "Host Memory Error\n";
-				message += "-----------------\n";
-				message += host_error_message;
-			}
-
-			if (!is_device_successful)
-			{
-
-				message += "Device Memory Error\n";
-				message += "-------------------\n";
-				message += device_error_message;
-
-			}
-
-			message += "Memory Unit Info\n";
-			message += "----------------\n";
-			message += this->toString();
-			message += "\n";
+			message += "ERROR: Failure in deallocating " + Types::toString(type) + " memory '" + name + "'.\n";
+			message += host_message;
+			message += device_message;
 		}
 
 		return is_successful;
 	}
 
 	template<typename T>
-	bool Unit<T>::deallocateMemory(std::string &message)
+	bool Unit<T>::deallocateNonPinnedHostMemory(std::string &message)
 	{
-
-		cudaError cuda_error_device = cudaSuccess;
-		cudaError cuda_error_host = cudaSuccess;
-		bool is_device_successful = false;
-		bool is_host_successful = false;
-		bool is_successful = false;
-
-		switch (type)
+		if (!is_host_allocated)
 		{
-		case Types::host_only:
-			if (is_host_allocated)
-				free(data_host);
-			break;
-
-		case Types::device_only:
-			if (is_device_allocated)
-				cuda_error_device = cudaFree(data_device);
-			break;
-
-		case Types::pinned:
-			if (is_host_allocated)
-				cuda_error_host = cudaFreeHost(data_host);
-
-			if (is_device_allocated)
-				cuda_error_device = cudaFree(data_device);
-			break;
-
-		case Types::non_pinned:
-			if (is_host_allocated)
-				free(data_host);
-			if (is_device_allocated)
-				cuda_error_device = cudaFree(data_device);
-			break;
+			message = "ERROR: Deallocating host memory that has not been previously allocated.\n";
+			return false;
 		}
 
-		////////////////////////////////
-		// NOTE: Clean up logic below //
-		////////////////////////////////
+		free(data_host);
 
-		// Verifying host memory has been deallocated and detecting error type.
-		std::string host_error_message = "ERROR: No Message produce.\n\n";
+		data_host = NULL;
+		is_host_allocated = false;
 
-		if (type == Types::device_only)
-			is_host_successful = true;
-		else
+		return true;
+	}
+
+	template<typename T>
+	bool Unit<T>::deallocatePinnedHostMemory(std::string &message)
+	{
+		if (!is_host_allocated)
 		{
-			if (!is_host_allocated)
-			{
-				is_host_successful = false;
-				host_error_message = "Can not deallocate memory as it has not been previously allocated.\n\n";
-
-			}
-			else
-			{
-				if (type == Types::pinned)
-				{
-					if (cuda_error_host == cudaSuccess)
-						is_host_successful = true;
-					else
-					{
-						is_host_successful = false;
-						host_error_message = ("Type    : " + std::string(cudaGetErrorName(cuda_error_host)) + "\n");
-						host_error_message += ("Message : " + std::string(cudaGetErrorString(cuda_error_host)) + "\n\n");
-					}
-				}
-				else
-				{
-					if (data_host)
-						is_host_successful = true;
-					else
-					{
-						is_host_successful = false;
-						host_error_message = "Pointer is invalid when is should not be.\n\n";
-					}
-				}
-			}
+			message = "ERROR: Deallocating host memory that has not been previously allocated.\n";
+			return false;
 		}
 
-		// Verifying device memory has been deallocated and detecting error type.	
-		std::string device_error_message = "ERROR: No Message produce.\n\n";;
+		cudaError error = cudaFreeHost(data_host);
 
-		if (type == Types::host_only)
-			is_device_successful = true;
-		else
-		{
-			if (!is_device_allocated)
-			{
-				is_device_successful = false;
-				device_error_message = "Can not deallocate memory as it has not been previously allocated.\n\n";
-			}
-			else
-			{
-				if (cuda_error_device == cudaSuccess)
-					if (data_device)
-						is_device_successful = true;
-					else
-					{
-						is_device_successful = false;
-						device_error_message = "Pointer is invalid when is should not be.\n\n";
-					}
-
-				else
-				{
-					is_device_successful = false;
-					device_error_message = ("Type    : " + std::string(cudaGetErrorName(cuda_error_device)) + "\n");
-					device_error_message += ("Message : " + std::string(cudaGetErrorString(cuda_error_device)) + "\n\n");
-				}
-			}
-		}
-
-		// Setting flags
-		if (is_host_successful)
+		if (error == cudaSuccess)
 		{
 			is_host_allocated = false;
 			data_host = NULL;
-		}
-
-		if (is_device_successful)
-		{
-			is_device_allocated = false;
-			data_device = NULL;
-		}
-
-
-		// Constructing output message.
-		if (is_device_successful && is_host_successful)
-		{
-			is_successful = true;
-			message += "SUCCESS: Deallocated " + Types::toString(type) + " memory '" + name + "'.\n";
-
+			return true;
 		}
 		else
 		{
-			is_successful = false;
+			std::string submessage;
+			StringProcessing::cudaErrorToString(error, submessage);
+			StringProcessing::indentLines(submessage);
 
-			message += "\n--------------------------\n";
-			message += "     DEALLOCATE ERROR     ";
-			message += "\n--------------------------\n\n";
-
-			if (!is_host_successful)
-			{
-				message += "Host Memory Error\n";
-				message += "-----------------\n";
-				message += host_error_message;
-			}
-
-			if (!is_device_successful)
-			{
-
-				message += "Device Memory Error\n";
-				message += "-------------------\n";
-				message += device_error_message;
-
-			}
-
-			message += "Memory Unit Info\n";
-			message += "----------------\n";
-			message += this->toString();
-			message += "\n";
+			message = "ERROR: Host memory not deallocated:\n";
+			message += submessage;
+			return false;
 		}
 
-		return is_successful;
+	}
 
-	};
+	template<typename T>
+	bool Unit<T>::deallocateDeviceMemory(std::string &message)
+	{
+		if (!is_device_allocated)
+		{
+			message = "ERROR: Deallocating device memory that has not been previously allocated.\n";
+			return false;
+		}
+
+		cudaError error = cudaFree(data_device);
+
+		if (error == cudaSuccess)
+		{
+			is_device_allocated = false;
+			data_device = NULL;
+			return true;
+		}
+		else
+		{
+			std::string submessage;
+			StringProcessing::cudaErrorToString(error, submessage);
+			StringProcessing::indentLines(submessage);
+
+			message = "ERROR: Device memory not deallocated:\n";
+			message += submessage;
+			return false;
+		}
+	}
+
+	// Copy Subroutines
 
 	template<typename T>
 	bool Unit<T>::copyDeviceToHost(std::string &message)
 	{
 
-		cudaError cuda_error = cudaSuccess;
-		bool is_successful = false;
-
+		bool is_successful;
 		std::string submessage;
 
-		if (type == Types::pinned || type == Types::non_pinned)
+		// Attempting to copy device to host
+		if ( !Types::isCopyableType(type) )
 		{
-			cuda_error = cudaMemcpy(data_host, data_device, memory_size, cudaMemcpyDeviceToHost);
-
-			if (cuda_error != cudaSuccess)
-			{
-				is_successful = false;
-				submessage = ("Type    : " + std::string(cudaGetErrorName(cuda_error)) + "\n");
-				submessage += ("Message : " + std::string(cudaGetErrorString(cuda_error)) + "\n\n");
-			}
-			else
-			{
-				is_successful = true;
-				message += "Copying device to host for " + Types::toString(type) + " memory '" + name + "' successful.\n";
-			}
+			is_successful = false;
+			submessage = "ERROR: Invalid memory unit type.\n";
 		}
 		else
 		{
-			is_successful = false;
-			submessage = "Attempting to copy data between host and device for invalid memory unit type.\n\n";
+			cudaError error = cudaMemcpy(data_host, data_device, memory_size, cudaMemcpyDeviceToHost);
+
+			if (error == cudaSuccess)
+				is_successful = true;
+			else
+			{
+				is_successful = false;
+				std::string cuda_error_message;
+				StringProcessing::cudaErrorToString(error, cuda_error_message);
+				StringProcessing::indentLines(cuda_error_message);
+
+				submessage = "ERROR: cudaMemcpy error.\n";
+				submessage += cuda_error_message;
+			}
 		}
 
-		if (!is_successful)
+		// Constructing return message
+		if (is_successful)
+			message += "SUCCESS: Copied device to host for " + Types::toString(type) + " memory '" + name + "'.\n";
+		else
 		{
-			message += "\n-------------------------------------\n";
-			message += "     MEMCPY DEVICE TO HOST ERROR     ";
-			message += "\n-------------------------------------\n\n";
+			StringProcessing::indentLines(submessage);
 
+			message += "ERROR: Failed to copy device to host for " + Types::toString(type) + " memory '" + name + "'.\n";
 			message += submessage;
-
-			message += "Memory Unit Info\n";
-			message += "----------------\n";
-			message += this->toString();
-			message += "\n";
 		}
-
 
 		return is_successful;
+
 	}
 
 	template<typename T>
 	bool Unit<T>::copyHostToDevice(std::string &message)
 	{
 
-		cudaError cuda_error = cudaSuccess;
-		bool is_successful = false;
 
+		bool is_successful;
 		std::string submessage;
 
-		if (type == Types::pinned || type == Types::non_pinned)
+		// Attempting to copy host to device;
+		if (!Types::isCopyableType(type))
 		{
-			cuda_error = cudaMemcpy(data_device, data_host, memory_size, cudaMemcpyHostToDevice);
-
-			if (cuda_error != cudaSuccess)
-			{
-				is_successful = false;
-				submessage = ("Type    : " + std::string(cudaGetErrorName(cuda_error)) + "\n");
-				submessage += ("Message : " + std::string(cudaGetErrorString(cuda_error)) + "\n\n");
-			}
-			else
-			{
-				is_successful = true;
-				message += "Copying host to device for " + Types::toString(type) + " memory '" + name + "' successful.\n";
-			}
+			is_successful = false;
+			submessage = "ERROR: Invalid memory unit type.\n";
 		}
 		else
 		{
-			is_successful = false;
-			submessage = "Attempting to copy data between host and device for invalid memory unit type.\n\n";
+			cudaError error = cudaMemcpy(data_device, data_host, memory_size, cudaMemcpyHostToDevice);
+
+			if (error == cudaSuccess)
+				is_successful = true;
+			else
+			{
+				is_successful = false;
+				std::string cuda_error_message;
+				StringProcessing::cudaErrorToString(error, cuda_error_message);
+				StringProcessing::indentLines(cuda_error_message);
+
+				submessage = "ERROR: cudaMemcpy error.\n";
+				submessage += cuda_error_message;
+			}
 		}
 
-		if (!is_successful)
+		// Constructing return message
+		if (is_successful)
+			message += "SUCCESS: Copied host to device for " + Types::toString(type) + " memory '" + name + "'.\n";
+		else
 		{
-			message += "\n-------------------------------------\n";
-			message += "     MEMCPY HOST TO DEVICE ERROR     ";
-			message += "\n-------------------------------------\n\n";
+			StringProcessing::indentLines(submessage);
 
+			message += "ERROR: Failed to copy host to device for " + Types::toString(type) + " memory '" + name + "'.\n";
 			message += submessage;
-
-			message += "Memory Unit Info\n";
-			message += "----------------\n";
-			message += this->toString();
-			message += "\n";
 		}
-
 
 		return is_successful;
 

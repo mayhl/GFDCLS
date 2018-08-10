@@ -46,6 +46,8 @@
 #include "include/memory/type.h"
 #include "include/memory/base_unit.h"
 
+#include "include/string_processing.h"
+
 #include <stdlib.h> 
 #include "cuda_runtime.h"
 #include <string>
@@ -73,6 +75,14 @@ namespace Memory
 
 
 	private:
+
+		bool allocateNonPinnedHostMemory( std::string &message );
+		bool allocatePinnedHostMemory(std::string &message);
+		bool allocateDeviceMemory(std::string &message);
+
+		bool deallocateNonPinnedHostMemory(std::string &message);
+		bool deallocatePinnedHostMemory(std::string &message);
+		bool deallocateDeviceMemory(std::string &message);
 
 		void initialize();
 		bool is_host_allocated;
