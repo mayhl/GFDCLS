@@ -12,9 +12,9 @@ namespace Memory
 	bool Base_Unit::compareDimensions(Base_Unit *other, std::string &message)
 	{
 		bool is_same = false;
-		if (n_x != other->getSizeX())
-			if (n_y != other->getSizeY())
-				if (n_z != other->getSizeZ())
+		if (n_x == other->getSizeX())
+			if (n_y == other->getSizeY())
+				if (n_z == other->getSizeZ())
 					is_same = true;
 
 		if (is_same)
