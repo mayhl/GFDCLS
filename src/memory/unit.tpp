@@ -1,23 +1,23 @@
-// ----------------------------------------------------------------------------------
-// Copyright 2016-2018 Michael-Angelo Yick-Hang Lam
-//
-// The development of this software was supported by the National Science Foundation
-// (NSF) Grant Number DMS-1211713.
-//
-// This file is part of GADIT.
-//
-// GADIT is free software: you can redistribute it and/or modify
-// it under the terms of the GNU General Public License version 3 as published by
-// the Free Software Foundation.
-//
-// GADIT is distributed in the hope that it will be useful,
-// but WITHOUT ANY WARRANTY; without even the implied warranty of
-// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-// GNU General Public License for more details.
-//
-// You should have received a copy of the GNU General Public License
-// along with GADIT.  If not, see <http://www.gnu.org/licenses/>.
-// ----------------------------------------------------------------------------------
+// -------------------------------------------------------------------- //
+// Copyright 2016-2018 Michael-Angelo Yick-Hang Lam                     //
+//                                                                      //
+// The development of this software was supported by the National       //
+// Science Foundation (NSF) Grant Number DMS-1211713.                   //
+//                                                                      //
+// This file is part of GADIT.                                          //
+//                                                                      //
+// GADIT is free software: you can redistribute it and/or modify it     //
+// under the terms of the GNU General Public License version 3 as       //
+// published by the Free Software Foundation.                           //
+//                                                                      //
+// GADIT is distributed in the hope that it will be useful, but WITHOUT //
+// ANY WARRANTY; without even the implied warranty of MERCHANTABILITY   //
+// or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public     //
+// License for more details.                                            //
+//                                                                      //
+// You should have received a copy of the GNU General Public License    //
+// along with GADIT.  If not, see <http://www.gnu.org/licenses/>.       //
+// ---------------------------------------------------------------------//
 
 
 //////////////////
@@ -136,7 +136,7 @@ namespace Memory
 		{
 			message += "SUCCESS: Not allocating memory, ";
 			message += Types::toString(type) + " memory '" + name + "'";
-			message += " is a secondary unit to '";
+			message += " is a secondary unit to ";
 			message	+= Types::toString(primary_unit->getType() ) + " memory '" + primary_unit->getName() + "'.\n";
 			 
 			return true;
@@ -282,7 +282,7 @@ namespace Memory
 		{
 			message += "SUCCESS: Not deallocating memory, ";
 			message += Types::toString(type) + " memory '" + name + "'";
-			message += " is a secondary unit to '";
+			message += " is a secondary unit to ";
 			message += Types::toString(primary_unit->getType()) + " memory '" + primary_unit->getName() + "'.\n";
 
 			return true;
