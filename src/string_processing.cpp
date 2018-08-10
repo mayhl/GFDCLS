@@ -8,7 +8,8 @@ namespace StringProcessing
 	{
 		size_t start_pos = 0;
 		const std::string newline = "\n";
-		const std::string indent = "\t";
+		const std::string indent = "  ";
+		const std::string newline_indent = newline + indent;
 
 		// indent first line
 		str.insert(0, indent);
@@ -18,8 +19,8 @@ namespace StringProcessing
 			if (start_pos == str.length() - 1)
 				break;
 			// Indent all other lines after new line chracter.
-			str.replace(start_pos, newline.length(), newline + indent);
-			start_pos += newline.length(); 
+			str.replace(start_pos, newline.length(), newline_indent );
+			start_pos += newline_indent.length();
 
 		}
 
