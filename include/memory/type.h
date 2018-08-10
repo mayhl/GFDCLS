@@ -31,7 +31,7 @@
 //         Memory Unit being a templated class, therefore, for each     //
 //         include of Memory unit, the source code for toString         //
 //         function is complied. Separating the Memory Type namespace   //
-//         into header file and source code fixed issue.                //                         //
+//         into header file and source code fixed issue.                //
 //                                                                      //
 // -------------------------------------------------------------------- //
 
@@ -54,6 +54,7 @@ namespace Memory
 		};
 		
 		std::string toString( Type type );
+		inline bool isCopyableType(Type type);
 	}
 	
 };

@@ -21,27 +21,41 @@
 
 #include "include/memory/type.h"
 
-std::string Memory::Types::toString( Type type )
+
+namespace Memory
 {
-	
-	std::string str_type = "ERROR";
-	switch(	type )
+	namespace Types
 	{
-		case Memory::Types::host_only:
-			str_type = "Host Only";
-			break;
-		case Memory::Types::device_only:
-			str_type = "Device Only";
-			break;
-		case Memory::Types::pinned:
-			str_type = "Pinned";
-			break;
-		case Memory::Types::non_pinned:
-			str_type = "Non Pinned";
-			break;
-	}
-	
-	return str_type;
+		std::string toString(Type type)
+		{
+
+			std::string str_type = "ERROR";
+			switch (type)
+			{
+			case Memory::Types::host_only:
+				str_type = "Host Only";
+				break;
+			case Memory::Types::device_only:
+				str_type = "Device Only";
+				break;
+			case Memory::Types::pinned:
+				str_type = "Pinned";
+				break;
+			case Memory::Types::non_pinned:
+				str_type = "Non Pinned";
+				break;
+			}
+
+			return str_type;
+		};
+
+		inline bool isCopyableType(Type type)
+		{
+			return (type == pinned || type == non_pinned);
+		}
+	};
 };
+
+
 	
 
