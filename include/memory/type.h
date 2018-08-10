@@ -54,7 +54,7 @@ namespace Memory
 		};
 		
 		std::string toString( Type type );
-		inline bool isCopyableType(Type type);
+		inline bool isCopyableType(Type type) { return (type == pinned || type == non_pinned); };
 	}
 	
 };

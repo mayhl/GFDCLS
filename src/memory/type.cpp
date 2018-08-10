@@ -48,11 +48,6 @@ namespace Memory
 
 			return str_type;
 		};
-
-		inline bool isCopyableType(Type type)
-		{
-			return (type == pinned || type == non_pinned);
-		}
 	};
 };
 
