@@ -317,7 +317,7 @@ namespace Memory
 			break;
 
 		case Types::pinned:
-			is_host_successful = deallocateNonPinnedHostMemory(host_message);
+			is_host_successful = deallocatePinnedHostMemory(host_message);
 			is_device_successful = deallocateDeviceMemory(device_message);
 			break;
 
