@@ -73,10 +73,10 @@ namespace Memory
 			std::string getName();
 
 			size_t getMemorySize();
+			Types::Type getType();
 
 		protected:
 
-			Types::Type getType();
 
 			size_t getSizeX();
 			size_t getSizeY();
