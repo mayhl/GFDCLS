@@ -78,6 +78,7 @@ namespace Memory
 		Unit(std::string name, Unit<T> *copy);
 
 		bool linkToPrimaryUnit(Base_Unit *base_unit, std::string &message);
+		bool isLinked() { return is_secondary_linked_memory; }
 
 		bool allocateMemory(std::string &message);
 		bool deallocateMemory(std::string &message);
@@ -93,9 +94,7 @@ namespace Memory
 		T *data_host;
 		T *data_device;
 
-		bool is_secondary_linked_memory;
 		Unit<T> *primary_unit;
-
 
 		bool allocateNonPinnedHostMemory( std::string &message );
 		bool allocatePinnedHostMemory(std::string &message);

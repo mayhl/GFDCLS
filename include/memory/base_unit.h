@@ -61,6 +61,8 @@ namespace Memory
 			Base_Unit(std::string name, Types::Type type, size_t n_x , size_t n_y , size_t n_z );
 
 			virtual bool linkToPrimaryUnit(Base_Unit *base_unit, std::string &message) = 0;
+			virtual bool isLinked() = 0;
+			bool is_secondary_linked_memory;
 
 			virtual bool allocateMemory  (std::string &message) = 0;
 			virtual bool deallocateMemory(std::string &message) = 0;
