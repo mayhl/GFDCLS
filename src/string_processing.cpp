@@ -61,17 +61,22 @@ namespace StringProcessing
 
 	void addTitleBanner(std::string &title)
 	{
-		for (auto & c : title) c = toupper(c);
+		// Making title upper case
+		// Note: Added static_cast to remove compiler warning
+		for (char & c : title) c = static_cast<char>( toupper(c) );
 
-		const std::string spacing = std::string(8, ' ');
+		// Adding spacing
+		const size_t spacing_size = 8;
+		const std::string spacing = std::string(spacing_size, ' ');
 		title = spacing + title + spacing;
+
 		addSubtitleBanner(title);
 		title = "\n" + title + "\n";
 	}
 
 	void addSubtitleBanner(std::string &title)
 	{
-		int title_length = title.length();
+		size_t title_length = title.length();
 		std::string banner = std::string(title_length, '-');
 		banner += "\n";
 
@@ -88,7 +93,7 @@ namespace StringProcessing
 	{
 		char buffer[50];
 
-		sprintf(buffer, "%.15e", value );
+		sprintf_s(buffer, "%.15e", value );
 		std::string str = buffer;
 
 		return str;
