@@ -91,9 +91,10 @@ namespace StringProcessing
 
 	std::string valueToString(double value)
 	{
-		char buffer[50];
+		const int buffer_size = 50;
+		char buffer[buffer_size];
 
-		sprintf_s(buffer, "%.15e", value );
+		snprintf(buffer, buffer_size, "%.15e", value );
 		std::string str = buffer;
 
 		return str;
