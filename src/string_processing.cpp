@@ -59,9 +59,39 @@ namespace StringProcessing
 		}
 	}
 
+	void addTitleBanner(std::string &title)
+	{
+		for (auto & c : title) c = toupper(c);
+
+		const std::string spacing = std::string(8, ' ');
+		title = spacing + title + spacing;
+		addSubtitleBanner(title);
+		title = "\n" + title + "\n";
+	}
+
+	void addSubtitleBanner(std::string &title)
+	{
+		int title_length = title.length();
+		std::string banner = std::string(title_length, '-');
+		banner += "\n";
+
+		title = banner + title + "\n" + banner;
+	}
+
 	void cudaErrorToString(cudaError error, std::string &message)
 	{
 		message =  "Type   : " + std::string(cudaGetErrorName(error)) + "\n";
 		message += "Message: " + std::string(cudaGetErrorString(error)) + "\n";
 	}
+
+	std::string valueToString(double value)
+	{
+		char buffer[50];
+
+		sprintf(buffer, "%.15e", value );
+		std::string str = buffer;
+
+		return str;
+	}
+
 };

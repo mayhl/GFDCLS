@@ -52,7 +52,13 @@ namespace StringProcessing
 {
 	void indentLines(std::string &str);
 
+
+	void addTitleBanner(std::string &title);
+	void addSubtitleBanner(std::string &title);
+
 	void cudaErrorToString(cudaError error, std::string &message);
+
+	std::string valueToString(double value);
 };
 
 #endif
