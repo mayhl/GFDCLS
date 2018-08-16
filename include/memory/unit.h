@@ -73,8 +73,9 @@ namespace Memory
 	{
 
 	public:
-		Unit(std::string name, Types::Type type, size_t n_x, size_t n_y, size_t n_z);
-		Unit(std::string name, Types::Type type, dim3 dimensions );
+		Unit(std::string name, Types::Type type, int n_x, int n_y, int n_z);
+		Unit(std::string name, Types::Type type, int n_x, int n_y);
+		Unit(std::string name, Types::Type type, int n_x);
 		Unit(std::string name, Unit<T> *copy);
 
 		bool linkToPrimaryUnit(Base_Unit *base_unit, std::string &message);

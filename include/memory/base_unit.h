@@ -57,8 +57,7 @@ namespace Memory
 	class Base_Unit
 	{
 		public:
-			Base_Unit(std::string name, Types::Type type, dim3 dimensions);
-			Base_Unit(std::string name, Types::Type type, size_t n_x , size_t n_y , size_t n_z );
+			Base_Unit(std::string name, Types::Type type, int n_x , int n_y , int n_z );
 
 			virtual bool linkToPrimaryUnit(Base_Unit *base_unit, std::string &message) = 0;
 			virtual bool isLinked() = 0;
@@ -78,17 +77,17 @@ namespace Memory
 		protected:
 
 
-			size_t getSizeX();
-			size_t getSizeY();
-			size_t getSizeZ();
+			int getSizeX();
+			int getSizeY();
+			int getSizeZ();
 
 			std::string name;
 			Types::Type type;
 			size_t memory_size;
 
-			size_t n_x;
-			size_t n_y;
-			size_t n_z;
+			int n_x;
+			int n_y;
+			int n_z;
 
 			unsigned short int dimensions;
 	};

@@ -40,23 +40,29 @@
 namespace Memory
 {
 	template<class T>
-	Unit<T>::Unit(std::string name, Types::Type type, size_t n_x, size_t n_y, size_t n_z) :
+	Unit<T>::Unit(std::string name, Types::Type type, int n_x, int n_y, int n_z) :
 		Base_Unit::Base_Unit(name, type, n_x , n_y , n_z)
 	{
 		initialize();
 	};
 
 	template<class T>
-	Unit<T>::Unit(std::string name, Types::Type type, dim3 dimensions ) :
-		Base_Unit::Base_Unit(name, type, dimensions)
-	{ 
-		initialize(); 
+	Unit<T>::Unit(std::string name, Types::Type type, int n_x, int n_y) :
+		Base_Unit::Base_Unit(name, type, n_x, n_y, 1)
+	{
+		initialize();
 	};
 
-	
+	template<class T>
+	Unit<T>::Unit(std::string name, Types::Type type, int n_x) :
+		Base_Unit::Base_Unit(name, type, n_x, 1,  1)
+	{
+		initialize();
+	};
+
 	template<class T>
 	Unit<T>::Unit(std::string name, Unit<T> *copy) :
-		Base_Unit::Base_Unit(name, copy->type, dim3(copy->n_x, copy->n_y , copy->n_z)) 
+		Base_Unit::Base_Unit(name, copy->type, copy->n_x, copy->n_y , copy->n_z) 
 	{ 
 		initialize(); 
 	};
