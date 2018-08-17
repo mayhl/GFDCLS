@@ -73,6 +73,7 @@ namespace Memory
 	{
 
 	public:
+		Unit(std::string name, Types::Type type, const Grid &grid);
 		Unit(std::string name, Types::Type type, int n_x, int n_y, int n_z);
 		Unit(std::string name, Types::Type type, int n_x, int n_y);
 		Unit(std::string name, Types::Type type, int n_x);

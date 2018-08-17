@@ -55,7 +55,14 @@ namespace Memory
 
 	template<class T>
 	Unit<T>::Unit(std::string name, Types::Type type, int n_x) :
-		Base_Unit::Base_Unit(name, type, n_x, 1,  1)
+		Base_Unit::Base_Unit(name, type, n_x, 1, 1)
+	{
+		initialize();
+	};
+
+	template<class T>
+	Unit<T>::Unit(std::string name, Types::Type type, const Grid &grid) :
+		Base_Unit::Base_Unit(name, type, grid )
 	{
 		initialize();
 	};
@@ -202,6 +209,10 @@ namespace Memory
 			message += "ERROR: Failure in allocating " + Types::toString(type) + " memory '" + name + "'.\n";
 			message += host_message;
 			message += device_message;
+
+			std::string memory_info = toString();
+			StringProcessing::indentLines(memory_info);
+			message += memory_info;
 		}
 	
 		return is_successful;
@@ -347,6 +358,10 @@ namespace Memory
 			message += "ERROR: Failure in deallocating " + Types::toString(type) + " memory '" + name + "'.\n";
 			message += host_message;
 			message += device_message;
+
+			std::string memory_info = toString();
+			StringProcessing::indentLines(memory_info);
+			message += memory_info;
 		}
 
 		return is_successful;
@@ -458,6 +473,10 @@ namespace Memory
 
 				submessage = "ERROR: cudaMemcpy error.\n";
 				submessage += cuda_error_message;
+
+				std::string memory_info = toString();
+				StringProcessing::indentLines(memory_info);
+				submessage += memory_info;
 			}
 		}
 
@@ -505,6 +524,10 @@ namespace Memory
 
 				submessage = "ERROR: cudaMemcpy error.\n";
 				submessage += cuda_error_message;
+
+				std::string memory_info = toString();
+				StringProcessing::indentLines(memory_info);
+				submessage += memory_info;
 			}
 		}
 

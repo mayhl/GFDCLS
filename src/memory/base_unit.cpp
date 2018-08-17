@@ -41,6 +41,10 @@ namespace Memory
 	Base_Unit::Base_Unit(std::string name, Types::Type type, int n_x, int n_y, int n_z) :
 		name(name), type(type), n_x(n_x), n_y(n_y), n_z(n_z) {}
 
+	Base_Unit::Base_Unit(std::string name, Types::Type type, const Grid &grid) :
+		name(name), type(type), n_x(grid.n_x), n_y(grid.n_x), n_z(grid.n_x) {}
+
+	
 	bool Base_Unit::compareDimensions(Base_Unit *other, std::string &message)
 	{
 		bool is_same = false;

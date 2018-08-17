@@ -51,13 +51,15 @@
 #include <typeinfo>
 
 #include "include/memory/type.h"
+#include "include/memory/grids.h"
 
 namespace Memory
 {
 	class Base_Unit
 	{
 		public:
-			Base_Unit(std::string name, Types::Type type, int n_x , int n_y , int n_z );
+			Base_Unit(std::string name, Types::Type type, int n_x, int n_y, int n_z);
+			Base_Unit(std::string name, Types::Type type, const Grid &grid);
 
 			virtual bool linkToPrimaryUnit(Base_Unit *base_unit, std::string &message) = 0;
 			virtual bool isLinked() = 0;
