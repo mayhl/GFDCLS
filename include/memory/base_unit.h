@@ -70,6 +70,8 @@ namespace Memory
 			virtual bool copyDeviceToHost(std::string &message) = 0;
 			virtual bool copyHostToDevice(std::string &message) = 0;
 
+			virtual std::string toString() = 0;
+
 			bool compareDimensions(Base_Unit *other, std::string &message);
 			std::string getName();
 
