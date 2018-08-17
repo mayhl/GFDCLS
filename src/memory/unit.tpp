@@ -561,7 +561,7 @@ namespace Memory
 		message += ("Data Type   : " + std::string(typeid(T).name()) + "\n");
 		message += ("Dims        : " + std::to_string(static_cast<unsigned long long>(dimensions)) + "\n");
 		message += ("n_x         : " + std::to_string(static_cast<unsigned long long>(n_x)) + "\n");
-		message += ("n_y         : " + std::to_string(static_cast<unsigned long long>(n_z)) + "\n");
+		message += ("n_y         : " + std::to_string(static_cast<unsigned long long>(n_y)) + "\n");
 		message += ("n_z         : " + std::to_string(static_cast<unsigned long long>(n_z)) + "\n");
 		message += ("Memory Size : " + std::to_string(static_cast<unsigned long long>(memory_size)) + "\n");
 
