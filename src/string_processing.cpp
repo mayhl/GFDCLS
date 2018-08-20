@@ -33,10 +33,109 @@
 //                                                                                  //
 //////////////////////////////////////////////////////////////////////////////////////
 
+#include <iostream>
 #include "include/string_processing.h"
 
 namespace StringProcessing
 {
+	void centerMultiLineString(std::string &str)
+	{
+		centerMultiLineString(str, 0);
+	}
+
+	void centerMultiLineString(std::string &str, const size_t extra_padding)
+	{
+		const std::string newline = "\n";
+
+		// Testing if string is one line
+		size_t start_pos = str.find(newline);
+		if (start_pos == std::string::npos)
+		{
+			std::string padding = std::string(extra_padding, ' ');
+			str = padding + str + padding;
+			return;
+		}
+		// If string is not one line, find max line length
+		start_pos = 0;
+		size_t old_pos = 0;
+		size_t max_length = findMaxLineLength(str) + 2*extra_padding;
+
+		int counter = 0;
+		while ((start_pos = str.find(newline, start_pos)) )//&& start_pos != std::string::npos)
+		{
+			size_t length;
+
+			// Special case for last line
+			if (start_pos == std::string::npos)
+				length = str.length() - old_pos;
+			else
+				length = start_pos - old_pos;
+
+			// Computing padding lengths
+			size_t total_pad = max_length - length;
+			size_t left_pad_size;
+			size_t right_pad_size;
+
+			if (total_pad % 2 == 0)
+			{
+				right_pad_size = total_pad / 2;
+				left_pad_size = right_pad_size;
+			}
+			else
+			{
+				right_pad_size = total_pad / 2;
+				left_pad_size = right_pad_size+1;
+			}
+
+			std::string left_padding = std::string(left_pad_size, ' ');
+			std::string right_padding = std::string(right_pad_size, ' ');
+
+			// Inserting Padding
+			str.insert(old_pos + length, right_padding);
+			str.insert(old_pos, left_padding);
+
+			if (start_pos == std::string::npos) break;
+
+			start_pos += total_pad+1;
+			old_pos = start_pos;
+
+		}
+
+	}
+
+	size_t findMaxLineLength(const std::string &str)
+	{
+		const std::string newline = "\n";
+
+		// Testing if string is one line
+		size_t start_pos = str.find(newline);
+		if (start_pos == std::string::npos) return str.length();
+
+		// If string is not one line, find max line length
+		start_pos = 0;
+		size_t old_pos = 0;
+		size_t max_length = 0;
+
+		while ((start_pos = str.find(newline, start_pos)) != std::string::npos)
+		{
+			size_t length;
+
+			// Special case for last line
+			if (start_pos == std::string::npos)
+				length = str.length() - old_pos;
+			else
+				length = start_pos - old_pos + 1;
+
+			if (length > max_length) max_length = length;
+
+			start_pos += newline.length();
+			old_pos = start_pos;
+		}
+
+		return max_length;
+
+	}
+
 	void indentLines(std::string &str)
 	{
 		// Changeable indent length to control the width of output text
@@ -65,10 +164,8 @@ namespace StringProcessing
 		// Note: Added static_cast to remove compiler warning
 		for (char & c : title) c = static_cast<char>( toupper(c) );
 
-		// Adding spacing
 		const size_t spacing_size = 8;
-		const std::string spacing = std::string(spacing_size, ' ');
-		title = spacing + title + spacing;
+		centerMultiLineString(title, spacing_size);
 
 		addSubtitleBanner(title);
 		title = "\n" + title + "\n";
@@ -76,7 +173,8 @@ namespace StringProcessing
 
 	void addSubtitleBanner(std::string &title)
 	{
-		size_t title_length = title.length();
+
+		size_t title_length = findMaxLineLength(title);
 		std::string banner = std::string(title_length, '-');
 		banner += "\n";
 

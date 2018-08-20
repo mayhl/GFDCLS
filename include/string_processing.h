@@ -52,6 +52,10 @@ namespace StringProcessing
 {
 	void indentLines(std::string &str);
 
+	void centerMultiLineString(std::string &str);
+	void centerMultiLineString(std::string &str, const size_t extra_padding);
+
+	size_t findMaxLineLength(const std::string &str);
 
 	void addTitleBanner(std::string &title);
 	void addSubtitleBanner(std::string &title);
