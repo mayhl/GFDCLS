@@ -50,7 +50,7 @@
 #include <string>
 #include <typeinfo>
 
-#include "include/memory/type.h"
+#include "include/memory/types.h"
 #include "include/memory/grids.h"
 
 namespace Memory

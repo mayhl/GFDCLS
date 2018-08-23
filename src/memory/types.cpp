@@ -33,7 +33,7 @@
 //                                                                                  //
 //////////////////////////////////////////////////////////////////////////////////////
 
-#include "include/memory/type.h"
+#include "include/memory/types.h"
 
 
 namespace Memory

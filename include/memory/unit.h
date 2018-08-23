@@ -57,7 +57,7 @@
 #ifndef MEMORY_UNIT_H
 #define MEMORY_UNIT_H
 
-#include "include/memory/type.h"
+#include "include/memory/types.h"
 #include "include/memory/base_unit.h"
 
 #include "include/string_processing.h"
